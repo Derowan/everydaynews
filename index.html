@@ -29,6 +29,31 @@
             </select>
             <button onclick="fetchNews()">Carica Notizie</button>
         </div>
+        <div id="filters">
+    <select id="category" onchange="fetchNews()">
+        <option value="general">General</option>
+        <option value="business">Business</option>
+        <option value="entertainment">Entertainment</option>
+        <option value="health">Health</option>
+        <option value="science">Science</option>
+        <option value="sports">Sports</option>
+        <option value="technology">Technology</option>
+    </select>
+    <button onclick="fetchNews()">Carica Notizie</button>
+</div>
+
+<table id="news-table" border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th>Titolo</th>
+            <th>Link</th>
+            <th>Anteprima</th>
+            <th>Categoria</th>
+        </tr>
+    </thead>
+    <tbody id="news-container"></tbody>
+</table>
+
 
         <!-- Sezione dove vengono visualizzate le notizie -->
         <div id="news-container">
