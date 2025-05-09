@@ -12,7 +12,6 @@ async function fetchNews() {
     try {
         const response = await fetch(url);
         const data = await response.json();
-
         console.log(data); // Debug
 
         if (data.articles && data.articles.length > 0) {
