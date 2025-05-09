@@ -1,0 +1,49 @@
+/* Stile base per il sito */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+header {
+  background-color: #333;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+main {
+  padding: 20px;
+}
+
+footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 10px;
+}
+
+#news-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-around;
+}
+
+.news-item {
+  background-color: white;
+  padding: 15px;
+  width: 30%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.news-item h2 {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+.news-item p {
+  font-size: 1em;
+  color: #555;
+}
