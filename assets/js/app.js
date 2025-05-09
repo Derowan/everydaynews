@@ -2,53 +2,48 @@
 const newsAPIKey = '9f5d0982b695411dbbe262f3878227ea'; // La tua API key
 const newsAPIUrl = 'https://newsapi.org/v2/top-headlines?country=us&apiKey=' + newsAPIKey;
 const newsContainer = document.getElementById('news-container');
-const categorySelect = document.getElementById('category'); // Selettore della categoria
+const categorySelect = document.getElementById('category');
 
 // Funzione per ottenere e visualizzare le notizie
 async function fetchNews() {
-    const category = categorySelect.value;  // Ottieni la categoria selezionata
+    const category = categorySelect.value;
     const url = `${newsAPIUrl}&category=${category}`;
 
     try {
         const response = await fetch(url);
         const data = await response.json();
 
-        // Log della risposta per vedere cosa sta restituendo
-        console.log(data);
+        console.log(data); // Debug
 
         if (data.articles && data.articles.length > 0) {
             displayNews(data.articles);
         } else {
-            newsContainer.innerHTML = '<tr><td colspan="4">No news found for this category.</td></tr>';
+            newsContainer.innerHTML = '<p>Nessuna notizia trovata per questa categoria.</p>';
         }
     } catch (error) {
-        console.error('Error fetching the news:', error);
-        newsContainer.innerHTML = '<tr><td colspan="4">Error loading news. Please try again later.</td></tr>';
+        console.error('Errore nel recupero delle notizie:', error);
+        newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie. Riprova più tardi.</p>';
     }
 }
 
-
-// Funzione per mostrare le notizie nella tabella
+// Funzione per visualizzare le notizie come card
 function displayNews(articles) {
-    let newsHTML = '';
-    
+    newsContainer.innerHTML = ''; // Svuota il contenitore
+
     articles.forEach(article => {
-        const preview = article.description ? article.description.substring(0, 150) + '...' : 'No preview available'; // Limita l'anteprima a 150 caratteri
+        const preview = article.description ? article.description.substring(0, 150) + '...' : 'Anteprima non disponibile';
 
-        newsHTML += `
-            <tr>
-                <td><a href="${article.url}" target="_blank">${article.title}</a></td>
-                <td><a href="${article.url}" target="_blank">${article.url}</a></td>
-                <td>${preview}</td>
-                <td>${article.category ? article.category : 'N/A'}</td>
-            </tr>
+        const newsCard = document.createElement('div');
+        newsCard.classList.add('news-item');
+
+        newsCard.innerHTML = `
+            <h2><a href="${article.url}" target="_blank">${article.title}</a></h2>
+            <p>${preview}</p>
         `;
-    });
 
-    // Inserisci l'HTML delle notizie nella tabella
-    newsContainer.innerHTML = newsHTML;
+        newsContainer.appendChild(newsCard);
+    });
 }
 
 // Carica le notizie quando la pagina viene caricata
 window.onload = fetchNews;
-}
