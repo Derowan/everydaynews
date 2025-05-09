@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const apiKey = 'YOUR_API_KEY'; // Sostituisci con la tua API Key da NewsAPI
+  const apiKey = '9f5d0982b695411dbbe262f3878227ea'; // Sostituisci con la tua API Key da NewsAPI
   const apiUrl = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${apiKey}`;
 
   // Funzione per recuperare le notizie
