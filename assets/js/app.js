@@ -13,6 +13,9 @@ async function fetchNews() {
         const response = await fetch(url);
         const data = await response.json();
 
+        // Log della risposta per vedere cosa sta restituendo
+        console.log(data);
+
         if (data.articles && data.articles.length > 0) {
             displayNews(data.articles);
         } else {
@@ -23,6 +26,7 @@ async function fetchNews() {
         newsContainer.innerHTML = '<tr><td colspan="4">Error loading news. Please try again later.</td></tr>';
     }
 }
+
 
 // Funzione per mostrare le notizie nella tabella
 function displayNews(articles) {
