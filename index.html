@@ -1,26 +1,42 @@
 <!DOCTYPE html>
 <html lang="en-US">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Everyday News</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    
     <link rel="stylesheet" href="assets/css/style.css">
-  </head>
-  <body>
-    <header>
-      <h1>Everyday News</h1>
-      <p>Le ultime notizie personalizzate per te!</p>
-    </header>
+</head>
+<body>
+    <div class="container">
+        <h1>Notizie del Giorno</h1>
+        
+        <!-- Sezione per selezionare la categoria -->
+        <div id="filters">
+            <label for="category">Seleziona Categoria:</label>
+            <select id="category">
+                <option value="general">Generale</option>
+                <option value="business">Business</option>
+                <option value="entertainment">Intrattenimento</option>
+                <option value="health">Salute</option>
+                <option value="science">Scienza</option>
+                <option value="sports">Sport</option>
+                <option value="technology">Tecnologia</option>
+            </select>
+            <button onclick="fetchNews()">Carica Notizie</button>
+        </div>
 
-    <main>
-      <div id="news-container"></div>
-    </main>
+        <!-- Sezione dove vengono visualizzate le notizie -->
+        <div id="news-container">
+            <!-- Le notizie verranno caricate qui -->
+        </div>
+    </div>
 
-    <footer>
-      <p>&copy; 2025 Everyday News</p>
-    </footer>
-
-    <script src="app.js"></script>
-  </body>
+    <!-- Carica il file JavaScript -->
+    <script src="assets/js/app.js"></script>
+</body>
 </html>
