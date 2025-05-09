@@ -1,29 +1,41 @@
-/* Stile base per il sito */
+/* Stile generale */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;
+  background-color: #f9f9f9;
 }
 
-header {
-  background-color: #333;
-  color: white;
-  padding: 20px;
-  text-align: center;
-}
-
-main {
+/* Contenitore principale */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 20px;
 }
 
-footer {
-  background-color: #333;
-  color: white;
+/* Titolo principale */
+h1 {
   text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+/* Filtro categorie */
+#filters {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+#filters select,
+#filters button {
   padding: 10px;
+  font-size: 1rem;
 }
 
+/* Griglia delle notizie */
 #news-container {
   display: flex;
   flex-wrap: wrap;
@@ -31,19 +43,32 @@ footer {
   justify-content: space-around;
 }
 
+/* Singola notizia */
 .news-item {
   background-color: white;
-  padding: 15px;
-  width: 30%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 300px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .news-item h2 {
-  font-size: 1.2em;
+  font-size: 1.1rem;
   margin-bottom: 10px;
+  color: #222;
 }
 
 .news-item p {
-  font-size: 1em;
+  font-size: 0.95rem;
   color: #555;
+  line-height: 1.4;
+}
+
+.news-item a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.news-item a:hover {
+  text-decoration: underline;
 }
