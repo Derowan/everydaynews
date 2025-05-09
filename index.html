@@ -6,43 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Everyday News</title>
 
-    <!-- Favicon -->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
-    
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
     <div class="container">
         <h1>Notizie del Giorno</h1>
-        
-        <!-- Sezione per selezionare la categoria -->
-      <div id="filters">
-    <label for="category">Scegli una categoria:</label>
-    <select id="category" onchange="fetchNews()">
-        <option value="general">Generale</option>
-        <option value="business">Business</option>
-        <option value="entertainment">Intrattenimento</option>
-        <option value="health">Salute</option>
-        <option value="science">Scienza</option>
-        <option value="sports">Sport</option>
-        <option value="technology">Tecnologia</option>
-    </select>
-    <button onclick="fetchNews()">Carica Notizie</button>
-</div>
 
-<table id="news-table" border="1" style="width: 100%; border-collapse: collapse;">
-    <thead>
-        <tr>
-            <th>Titolo</th>
-            <th>Link</th>
-            <th>Anteprima</th>
-            <th>Categoria</th>
-        </tr>
-    </thead>
-    <tbody id="news-container"></tbody>
-</table>
+        <!-- Filtro per categoria -->
+        <div id="filters">
+            <label for="category">Scegli una categoria:</label>
+            <select id="category" onchange="fetchNews()">
+                <option value="general">Generale</option>
+                <option value="business">Business</option>
+                <option value="entertainment">Intrattenimento</option>
+                <option value="health">Salute</option>
+                <option value="science">Scienza</option>
+                <option value="sports">Sport</option>
+                <option value="technology">Tecnologia</option>
+            </select>
+            <button onclick="fetchNews()">Carica Notizie</button>
+        </div>
 
-    <!-- Carica il file JavaScript -->
+        <!-- Contenitore delle notizie (card) -->
+        <div id="news-container"></div>
+    </div>
+
     <script src="assets/js/app.js"></script>
 </body>
 </html>
