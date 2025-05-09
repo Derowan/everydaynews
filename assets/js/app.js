@@ -51,6 +51,4 @@ function displayNews(articles) {
 
 // Carica le notizie quando la pagina viene caricata
 window.onload = fetchNews;
-
-    color: #999;
 }
