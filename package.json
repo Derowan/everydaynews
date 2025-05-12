@@ -2,10 +2,10 @@
   "name": "news-proxy",
   "version": "1.0.0",
   "description": "Proxy per NewsAPI con Express",
-  "main": "assets/js/server.js",
+  "main": "server.js",  // Cambia il percorso per il nuovo server.js
   "type": "module",
   "scripts": {
-    "start": "node assets/js/server.js"
+    "start": "node server.js"  // Cambia il comando per eseguire il server.js dalla root
   },
   "dependencies": {
     "express": "^4.18.2",
