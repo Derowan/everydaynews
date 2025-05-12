@@ -1,34 +1,19 @@
 {
   "name": "everydaynews",
   "version": "1.0.0",
-  "description": "Un'app per visualizzare le notizie",
+  "description": "Proxy per NewsAPI",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js"
   },
-  "type": "module",
   "engines": {
     "node": "16.x"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "node-fetch": "^3.0.0"
-  },
-  "devDependencies": {},
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Derowan/everydaynews.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Derowan/everydaynews/issues"
-  },
-  "homepage": "https://github.com/Derowan/everydaynews#readme"
+  }
 }
-"dependencies": {
-  "express": "^4.17.1",
-  "node-fetch": "^3.0.0",
-  "cors": "^2.8.5"
-}
+
