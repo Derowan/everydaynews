@@ -2,7 +2,7 @@ const express = require('express');
 const fetch = require('node-fetch');
 const app = express();
 
-const API_KEY = 'la-tua-api-key';
+const API_KEY = '9f5d0982b695411dbbe262f3878227ea';
 const PORT = 3000;
 
 app.get('/news', async (req, res) => {
