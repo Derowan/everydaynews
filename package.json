@@ -27,3 +27,8 @@
   },
   "homepage": "https://github.com/Derowan/everydaynews#readme"
 }
+"dependencies": {
+  "express": "^4.17.1",
+  "node-fetch": "^3.0.0",
+  "cors": "^2.8.5"
+}
