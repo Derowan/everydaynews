@@ -1,5 +1,6 @@
-const express = require('express');
+import express from 'express';
 import fetch from 'node-fetch';
+
 const app = express();
 
 const API_KEY = '9f5d0982b695411dbbe262f3878227ea';
