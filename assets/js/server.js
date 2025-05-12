@@ -1,8 +1,9 @@
+// server.js
 const express = require('express');
-const fetch = require('node-fetch'); // solo se usi Node <18
+const fetch = require('node-fetch');
 const app = express();
 
-const API_KEY = '9f5d0982b695411dbbe262f3878227ea';
+const API_KEY = 'la-tua-api-key';  // Inserisci la tua API key di NewsAPI
 const PORT = 3000;
 
 app.get('/news', async (req, res) => {
