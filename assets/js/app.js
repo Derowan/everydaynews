@@ -1,32 +1,33 @@
-const proxyUrl = 'https://everydaynews.onrender.com';  // URL del tuo proxy su Render
+const proxyUrl = 'https://everydaynews.onrender.com';  // Proxy
 const newsContainer = document.getElementById('news-container');
 
 // Quando clicchi su una voce del sottomenù
 document.querySelectorAll('.submenu li').forEach(item => {
   item.addEventListener('click', () => {
     const category = item.dataset.category;
-    const type = item.dataset.type;
-    fetchNews(category, type);  // Chiama la funzione per caricare le notizie
+    const type = item.dataset.type;  // Tipo (italiano o internazionale)
+    fetchNews(category, type);
+  });
 });
 
 async function fetchNews(category, type) {
   if (type === 'italian') {
-    fetchItalianNews(category);  // Usa GNews per le notizie italiane
+    fetchItalianNews(category);  // Carica le notizie italiane
   } else if (type === 'international') {
-    let url = `${proxyUrl}/news?language=en&category=${category}`;  // Chiamata al proxy per notizie internazionali
-    fetchNewsFromAPI(url);  // Usa NewsAPI per le notizie internazionali tramite il proxy
+    let url = `${proxyUrl}/news?language=en&category=${category}`;  // Notizie internazionali tramite proxy
+    fetchNewsFromAPI(url);
   }
 }
 
 // Funzione per caricare le notizie italiane con GNews
 async function fetchItalianNews(category) {
-  const gNewsAPIKey = 'c3674db69f99957229145b7656d1b845';  // Sostituisci con la tua chiave API GNews
+  const gNewsAPIKey = 'c3674db69f99957229145b7656d1b845';  // Chiave API GNews
   const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=IT&category=${category}&token=${gNewsAPIKey}`;
 
   try {
     const response = await fetch(gNewsUrl);
     const data = await response.json();
-    displayNews(data);  // Mostra le notizie
+    displayNews(data);  // Mostra le notizie italiane
   } catch (error) {
     newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie italiane.</p>';
     console.error(error);
@@ -68,19 +69,3 @@ function displayNews(data) {
     newsContainer.innerHTML = '<p>Nessuna notizia trovata.</p>';
   }
 }
-
-// Gestione menu a tendina con ritardo di chiusura
-document.querySelectorAll('.dropdown').forEach(dropdown => {
-  let timeout;
-
-  dropdown.addEventListener('mouseenter', () => {
-    clearTimeout(timeout);
-    dropdown.querySelector('.submenu').style.display = 'block';
-  });
-
-  dropdown.addEventListener('mouseleave', () => {
-    timeout = setTimeout(() => {
-      dropdown.querySelector('.submenu').style.display = 'none';
-    }, 500);  // Resta visibile per 0.5 secondi dopo che il mouse esce
-  });
-});
