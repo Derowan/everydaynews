@@ -1,37 +1,49 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Everyday News</title>
-
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="assets/css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EverydayNews</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
-    <div class="container">
-        <h1>Notizie del Giorno</h1>
+  <!-- HEADER CON MENÙ -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">EverydayNews</div>
+      <ul class="menu">
+        <li class="dropdown">
+          <a href="#" id="btn-italia">Notizie Italiane</a>
+          <ul class="submenu" id="menu-italia">
+            <li data-category="general" data-type="italian">Generale</li>
+            <li data-category="business" data-type="italian">Business</li>
+            <li data-category="entertainment" data-type="italian">Intrattenimento</li>
+            <li data-category="health" data-type="italian">Salute</li>
+            <li data-category="science" data-type="italian">Scienza</li>
+            <li data-category="sports" data-type="italian">Sport</li>
+            <li data-category="technology" data-type="italian">Tecnologia</li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" id="btn-world">Notizie Internazionali</a>
+          <ul class="submenu" id="menu-world">
+            <li data-category="general" data-type="international">General</li>
+            <li data-category="business" data-type="international">Business</li>
+            <li data-category="entertainment" data-type="international">Entertainment</li>
+            <li data-category="health" data-type="international">Health</li>
+            <li data-category="science" data-type="international">Science</li>
+            <li data-category="sports" data-type="international">Sports</li>
+            <li data-category="technology" data-type="international">Technology</li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </header>
 
-        <!-- Selezione tipo di notizie -->
-        <div id="news-type">
-            <button id="international-news-btn">Notizie Internazionali</button>
-            <button id="italian-news-btn">Notizie Italiane</button>
-        </div>
+  <main>
+    <div id="news-container" class="news-container"></div>
+  </main>
 
-        <!-- Filtro per categoria (nascondiamo inizialmente) -->
-        <div id="filters" style="display:none;">
-            <label for="category">Scegli una categoria:</label>
-            <select id="category" onchange="fetchNews()">
-                <!-- Categorie vuote, verranno popolate dinamicamente -->
-            </select>
-            <button onclick="fetchNews()">Carica Notizie</button>
-        </div>
-
-        <!-- Contenitore delle notizie (card) -->
-        <div id="news-container"></div>
-    </div>
-
-    <script src="assets/js/app.js"></script>
+  <script src="assets/js/app.js"></script>
 </body>
 </html>
