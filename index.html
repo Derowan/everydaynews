@@ -7,27 +7,26 @@
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
-  <!-- HEADER CON MENÙ -->
   <header>
     <div class="navbar">
       <div class="logo">EverydayNews</div>
-      <ul class="menu" role="menu">
-        <li class="dropdown" id="italy-dropdown">
-          <button aria-haspopup="true" aria-expanded="false">Notizie Italiane</button>
-          <ul class="submenu" role="menu" aria-labelledby="italy-dropdown">
-            <li data-category="general-it">Generali</li>
-            <li data-category="business-it">Business</li>
-            <li data-category="health-it">Salute</li>
-            <li data-category="technology-it">Tecnologia</li>
+      <ul class="menu">
+        <li class="dropdown">
+          <a href="#" data-type="italian">Notizie Italiane</a>
+          <ul class="submenu">
+            <li data-category="general" data-type="italian">Generali</li>
+            <li data-category="business" data-type="italian">Business</li>
+            <li data-category="health" data-type="italian">Salute</li>
+            <li data-category="technology" data-type="italian">Tecnologia</li>
           </ul>
         </li>
-        <li class="dropdown" id="world-dropdown">
-          <button aria-haspopup="true" aria-expanded="false">Notizie Internazionali</button>
-          <ul class="submenu" role="menu" aria-labelledby="world-dropdown">
-            <li data-category="general">Generali</li>
-            <li data-category="business">Business</li>
-            <li data-category="health">Salute</li>
-            <li data-category="technology">Tecnologia</li>
+        <li class="dropdown">
+          <a href="#" data-type="international">Notizie Internazionali</a>
+          <ul class="submenu">
+            <li data-category="general" data-type="international">Generali</li>
+            <li data-category="business" data-type="international">Business</li>
+            <li data-category="health" data-type="international">Salute</li>
+            <li data-category="technology" data-type="international">Tecnologia</li>
           </ul>
         </li>
       </ul>
