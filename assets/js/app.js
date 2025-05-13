@@ -1,55 +1,53 @@
-const proxyUrl = 'https://everydaynews.onrender.com';
+const proxyUrl = 'https://everydaynews.onrender.com';  // URL del tuo proxy su Render
 const newsContainer = document.getElementById('news-container');
 
 // Quando clicchi su una voce del sottomenù
 document.querySelectorAll('.submenu li').forEach(item => {
   item.addEventListener('click', () => {
-    const categoryRaw = item.dataset.category;
-    const type = item.closest('.dropdown').id.includes('italy') ? 'italian' : 'international';
-    const category = categoryRaw.replace('-it', ''); // rimuove il suffisso -it per GNews
-    fetchNews(category, type);
-  });
+    const category = item.dataset.category;
+    const type = item.dataset.type;
+    fetchNews(category, type);  // Chiama la funzione per caricare le notizie
 });
 
 async function fetchNews(category, type) {
   if (type === 'italian') {
-    fetchItalianNews(category);
+    fetchItalianNews(category);  // Usa GNews per le notizie italiane
   } else if (type === 'international') {
-    let url = `${proxyUrl}/news?language=en&category=${category}`;
-    fetchNewsFromAPI(url);
+    let url = `${proxyUrl}/news?language=en&category=${category}`;  // Chiamata al proxy per notizie internazionali
+    fetchNewsFromAPI(url);  // Usa NewsAPI per le notizie internazionali tramite il proxy
   }
 }
 
-// GNews API per le notizie italiane
+// Funzione per caricare le notizie italiane con GNews
 async function fetchItalianNews(category) {
-  const gNewsAPIKey = 'c3674db69f99957229145b7656d1b845';  // Inserisci la tua chiave
-  const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=it&category=${category}&token=${gNewsAPIKey}`;
+  const gNewsAPIKey = 'c3674db69f99957229145b7656d1b845';  // Sostituisci con la tua chiave API GNews
+  const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=IT&category=${category}&token=${gNewsAPIKey}`;
 
   try {
     const response = await fetch(gNewsUrl);
     const data = await response.json();
-    displayNews(data);
+    displayNews(data);  // Mostra le notizie
   } catch (error) {
     newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie italiane.</p>';
     console.error(error);
   }
 }
 
-// NewsAPI tramite proxy per notizie internazionali
+// Funzione per caricare le notizie internazionali da NewsAPI tramite il proxy
 async function fetchNewsFromAPI(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    displayNews(data);
+    displayNews(data);  // Mostra le notizie
   } catch (error) {
     newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie internazionali.</p>';
     console.error(error);
   }
 }
 
-// Mostra le notizie
+// Funzione per visualizzare le notizie
 function displayNews(data) {
-  newsContainer.innerHTML = '';
+  newsContainer.innerHTML = '';  // Pulisce il contenitore delle notizie
 
   if (data.articles && data.articles.length > 0) {
     data.articles.forEach(article => {
@@ -71,7 +69,7 @@ function displayNews(data) {
   }
 }
 
-// Gestione apertura/chiusura menu dropdown al passaggio del mouse
+// Gestione menu a tendina con ritardo di chiusura
 document.querySelectorAll('.dropdown').forEach(dropdown => {
   let timeout;
 
@@ -83,6 +81,6 @@ document.querySelectorAll('.dropdown').forEach(dropdown => {
   dropdown.addEventListener('mouseleave', () => {
     timeout = setTimeout(() => {
       dropdown.querySelector('.submenu').style.display = 'none';
-    }, 500); // chiude dopo mezzo secondo
+    }, 500);  // Resta visibile per 0.5 secondi dopo che il mouse esce
   });
 });
