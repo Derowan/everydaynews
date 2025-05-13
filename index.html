@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,17 +13,17 @@
     <div class="container">
         <h1>Notizie del Giorno</h1>
 
-        <!-- Filtro per categoria -->
-        <div id="filters">
+        <!-- Selezione tipo di notizie -->
+        <div id="news-type">
+            <button id="international-news-btn">Notizie Internazionali</button>
+            <button id="italian-news-btn">Notizie Italiane</button>
+        </div>
+
+        <!-- Filtro per categoria (nascondiamo inizialmente) -->
+        <div id="filters" style="display:none;">
             <label for="category">Scegli una categoria:</label>
             <select id="category" onchange="fetchNews()">
-                <option value="general">Generale</option>
-                <option value="business">Business</option>
-                <option value="entertainment">Intrattenimento</option>
-                <option value="health">Salute</option>
-                <option value="science">Scienza</option>
-                <option value="sports">Sport</option>
-                <option value="technology">Tecnologia</option>
+                <!-- Categorie vuote, verranno popolate dinamicamente -->
             </select>
             <button onclick="fetchNews()">Carica Notizie</button>
         </div>
