@@ -14,19 +14,17 @@
         <h1>Notizie del Giorno</h1>
 
         <!-- Filtro per categoria -->
-        <div id="filters">
-            <label for="category">Scegli una categoria:</label>
-            <select id="category" onchange="fetchNews()">
-                <option value="general">Generale</option>
-                <option value="business">Business</option>
-                <option value="entertainment">Intrattenimento</option>
-                <option value="health">Salute</option>
-                <option value="science">Scienza</option>
-                <option value="sports">Sport</option>
-                <option value="technology">Tecnologia</option>
-            </select>
-            <button onclick="fetchNews()">Carica Notizie</button>
-        </div>
+        <select id="category" onchange="fetchNews()">
+    <option value="general">Notizie dal Mondo (Generali)</option>  <!-- Notizie generali dal mondo -->
+    <option value="it-politics">Politica Italia</option>  <!-- Politica italiana -->
+    <option value="it-business">Business Italia</option>  <!-- Business in Italia -->
+    <option value="it-entertainment">Intrattenimento Italia</option>  <!-- Intrattenimento Italia -->
+    <option value="it-health">Salute Italia</option>  <!-- Salute in Italia -->
+    <option value="it-science">Scienza Italia</option>  <!-- Scienza Italia -->
+    <option value="it-sports">Sport Italia</option>  <!-- Sport Italia -->
+    <option value="it-technology">Tecnologia Italia</option>  <!-- Tecnologia Italia -->
+        </select>
+
 
         <!-- Contenitore delle notizie (card) -->
         <div id="news-container"></div>
