@@ -1,23 +1,27 @@
 /* Stile generale */
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f9f9f9;
+  background-color: #f4f4f4;
+  color: #333;
 }
 
 /* Contenitore principale */
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 40px 20px;
 }
 
 /* Titolo principale */
 h1 {
   text-align: center;
-  color: #333;
-  margin-bottom: 30px;
+  color: #222;
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 /* Filtro categorie */
@@ -26,49 +30,87 @@ h1 {
   justify-content: center;
   align-items: center;
   gap: 15px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
 }
 
 #filters select,
 #filters button {
-  padding: 10px;
+  padding: 10px 15px;
   font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+#filters button:hover {
+  background-color: #0066cc;
+  color: #fff;
 }
 
 /* Griglia delle notizie */
 #news-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  justify-content: space-around;
+  gap: 30px;
+  justify-content: center;
 }
 
 /* Singola notizia */
 .news-item {
-  background-color: white;
-  padding: 20px;
-  width: 300px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  padding: 25px;
+  width: 320px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
+.news-item:hover {
+  transform: translateY(-5px);
+}
+
+/* Data */
+.news-date {
+  font-size: 0.85rem;
+  color: #999;
+  margin-bottom: 5px;
+  font-style: italic;
+}
+
+/* Titolo notizia */
 .news-item h2 {
-  font-size: 1.1rem;
-  margin-bottom: 10px;
-  color: #222;
+  font-size: 1.2rem;
+  margin: 0;
+  color: #005f99;
 }
 
+/* Paragrafo */
 .news-item p {
-  font-size: 0.95rem;
-  color: #555;
-  line-height: 1.4;
+  font-size: 0.96rem;
+  color: #444;
+  line-height: 1.6;
+  margin: 10px 0;
 }
 
+/* Link */
 .news-item a {
-  color: #0066cc;
+  color: #0077cc;
   text-decoration: none;
+  font-weight: bold;
 }
 
 .news-item a:hover {
   text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .news-item {
+    width: 100%;
+  }
 }
