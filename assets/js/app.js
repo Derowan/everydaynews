@@ -51,7 +51,11 @@ async function fetchNews() {
 
     // Aggiunge il filtro per le notizie italiane se la selezione riguarda l'Italia
     if (currentNewsType === 'italian') {
-        url = `${proxyUrl}/news?category=${category}&country=it`;
+        // Per notizie italiane
+        url = `${proxyUrl}/news?category=${category}&country=it&language=it`;
+    } else if (currentNewsType === 'international') {
+        // Per notizie internazionali
+        url = `${proxyUrl}/news?category=${category}&language=en`;  // In inglese per le notizie internazionali
     }
 
     try {
@@ -59,22 +63,27 @@ async function fetchNews() {
         const data = await response.json();
         newsContainer.innerHTML = ''; // Pulisce le notizie precedenti
 
-        data.articles.forEach(article => {
-            const newsItem = document.createElement('div');
-            newsItem.className = 'news-item';
+        // Verifica se ci sono articoli
+        if (data.articles && data.articles.length > 0) {
+            data.articles.forEach(article => {
+                const newsItem = document.createElement('div');
+                newsItem.className = 'news-item';
 
-            const publishedDate = new Date(article.publishedAt).toLocaleDateString('it-IT', {
-                year: 'numeric', month: 'long', day: 'numeric'
+                const publishedDate = new Date(article.publishedAt).toLocaleDateString('it-IT', {
+                    year: 'numeric', month: 'long', day: 'numeric'
+                });
+
+                newsItem.innerHTML = `
+                    <div class="news-date">${publishedDate}</div>
+                    <h2>${article.title}</h2>
+                    <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
+                    <a href="${article.url}" target="_blank">Leggi di più</a>
+                `;
+                newsContainer.appendChild(newsItem);
             });
-
-            newsItem.innerHTML = `
-                <div class="news-date">${publishedDate}</div>
-                <h2>${article.title}</h2>
-                <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
-                <a href="${article.url}" target="_blank">Leggi di più</a>
-            `;
-            newsContainer.appendChild(newsItem);
-        });
+        } else {
+            newsContainer.innerHTML = '<p>Non ci sono articoli disponibili per questa categoria.</p>';
+        }
     } catch (error) {
         newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie.</p>';
         console.error('Errore fetch:', error);
@@ -98,3 +107,4 @@ italianNewsBtn.addEventListener('click', () => {
 window.addEventListener('DOMContentLoaded', () => {
     filtersDiv.style.display = 'none';  // Nasconde inizialmente il filtro
 });
+
