@@ -48,3 +48,17 @@ async function fetchNews(category, type) {
     console.error(error);
   }
 }
+document.querySelectorAll('.dropdown').forEach(dropdown => {
+    let timeout;
+
+    dropdown.addEventListener('mouseenter', () => {
+        clearTimeout(timeout);
+        dropdown.querySelector('.submenu').style.display = 'block';
+    });
+
+    dropdown.addEventListener('mouseleave', () => {
+        timeout = setTimeout(() => {
+            dropdown.querySelector('.submenu').style.display = 'none';
+        }, 500); // resta visibile per 0.5 secondi dopo che il mouse esce
+    });
+});
