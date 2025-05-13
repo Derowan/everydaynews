@@ -14,9 +14,9 @@ async function fetchNews(category, type) {
   let url = `${proxyUrl}/news?category=${category}`;
 
   if (type === 'italian') {
-    url += `&country=it&language=it`;
+    url += `&country=it`; // 🔁 RIMOSSO language=it
   } else if (type === 'international') {
-    url += `&language=en`;
+    url += `&language=en`; // ✅ Mantieni lingua inglese per le internazionali
   }
 
   try {
@@ -48,17 +48,19 @@ async function fetchNews(category, type) {
     console.error(error);
   }
 }
+
+// Gestione menu a tendina con ritardo chiusura
 document.querySelectorAll('.dropdown').forEach(dropdown => {
-    let timeout;
+  let timeout;
 
-    dropdown.addEventListener('mouseenter', () => {
-        clearTimeout(timeout);
-        dropdown.querySelector('.submenu').style.display = 'block';
-    });
+  dropdown.addEventListener('mouseenter', () => {
+    clearTimeout(timeout);
+    dropdown.querySelector('.submenu').style.display = 'block';
+  });
 
-    dropdown.addEventListener('mouseleave', () => {
-        timeout = setTimeout(() => {
-            dropdown.querySelector('.submenu').style.display = 'none';
-        }, 500); // resta visibile per 0.5 secondi dopo che il mouse esce
-    });
+  dropdown.addEventListener('mouseleave', () => {
+    timeout = setTimeout(() => {
+      dropdown.querySelector('.submenu').style.display = 'none';
+    }, 500); // resta visibile per 0.5 secondi dopo che il mouse esce
+  });
 });
