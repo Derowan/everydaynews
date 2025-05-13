@@ -5,23 +5,25 @@ const newsContainer = document.getElementById('news-container');
 document.querySelectorAll('.submenu li').forEach(item => {
   item.addEventListener('click', () => {
     const category = item.dataset.category;
-    fetchNews(category);  // Solo notizie italiane, quindi tipo non necessario
+    const type = item.dataset.type;
+    fetchNews(category, type);
   });
 });
 
-async function fetchNews(category) {
-  let url = `${proxyUrl}/news?country=it&language=it`; // Filtra solo per l'Italia e per la lingua italiana
+async function fetchNews(category, type) {
+  let url = `${proxyUrl}/news`;
 
-  // Aggiungi la categoria se è stata selezionata
-  if (category) {
-    url += `&category=${category}`;
-  }
+if (type === 'italian') {
+  url += `?country=it&language=it&category=${category}`;
+} else if (type === 'international') {
+  url += `?language=en&category=${category}`;
+}
 
   try {
     const response = await fetch(url);
     const data = await response.json();
 
-    newsContainer.innerHTML = '';  // Pulisce il contenitore delle notizie
+    newsContainer.innerHTML = '';
 
     if (data.articles && data.articles.length > 0) {
       data.articles.forEach(article => {
@@ -47,7 +49,7 @@ async function fetchNews(category) {
   }
 }
 
-// Gestione del menù a tendina con ritardo di chiusura
+// Gestione menu a tendina con ritardo chiusura
 document.querySelectorAll('.dropdown').forEach(dropdown => {
   let timeout;
 
@@ -59,6 +61,6 @@ document.querySelectorAll('.dropdown').forEach(dropdown => {
   dropdown.addEventListener('mouseleave', () => {
     timeout = setTimeout(() => {
       dropdown.querySelector('.submenu').style.display = 'none';
-    }, 500); // Resta visibile per 0.5 secondi dopo che il mouse esce
+    }, 500); // resta visibile per 0.5 secondi dopo che il mouse esce
   });
 });
