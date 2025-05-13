@@ -5,8 +5,20 @@ const newsContainer = document.getElementById('news-container');
 document.querySelectorAll('.submenu li').forEach(item => {
   item.addEventListener('click', () => {
     const category = item.dataset.category;
-    const type = item.dataset.type;
+    const type = item.closest('.dropdown').id.includes('italy') ? 'italian' : 'international'; 
     fetchNews(category, type);  // Chiama la funzione per caricare le notizie
+  });
+});
+
+// Gestione della visibilità del sottomenù e aria-expanded
+document.querySelectorAll('.dropdown button').forEach(button => {
+  button.addEventListener('click', () => {
+    const submenu = button.nextElementSibling;
+    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+
+    button.setAttribute('aria-expanded', !isExpanded);
+    submenu.style.display = isExpanded ? 'none' : 'block';
+  });
 });
 
 async function fetchNews(category, type) {
@@ -68,19 +80,3 @@ function displayNews(data) {
     newsContainer.innerHTML = '<p>Nessuna notizia trovata.</p>';
   }
 }
-
-// Gestione menu a tendina con ritardo di chiusura
-document.querySelectorAll('.dropdown').forEach(dropdown => {
-  let timeout;
-
-  dropdown.addEventListener('mouseenter', () => {
-    clearTimeout(timeout);
-    dropdown.querySelector('.submenu').style.display = 'block';
-  });
-
-  dropdown.addEventListener('mouseleave', () => {
-    timeout = setTimeout(() => {
-      dropdown.querySelector('.submenu').style.display = 'none';
-    }, 500);  // Resta visibile per 0.5 secondi dopo che il mouse esce
-  });
-});
