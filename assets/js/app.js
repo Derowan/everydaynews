@@ -1,30 +1,29 @@
 const proxyUrl = 'https://everydaynews.onrender.com';
 const newsContainer = document.getElementById('news-container');
 
-// Assegna evento clic a ogni voce del sottomenù
+// Quando clicchi su una voce del sottomenù
 document.querySelectorAll('.submenu li').forEach(item => {
   item.addEventListener('click', () => {
-    const category = item.dataset.category;
-    const type = item.closest('.dropdown').id === 'italy-dropdown' ? 'italian' : 'international';
+    const categoryRaw = item.dataset.category;
+    const type = item.closest('.dropdown').id.includes('italy') ? 'italian' : 'international';
+    const category = categoryRaw.replace('-it', ''); // rimuove il suffisso -it per GNews
     fetchNews(category, type);
   });
 });
 
-// Carica le notizie in base al tipo
 async function fetchNews(category, type) {
   if (type === 'italian') {
     fetchItalianNews(category);
   } else if (type === 'international') {
-    const url = `${proxyUrl}/news?language=en&category=${category}`;
+    let url = `${proxyUrl}/news?language=en&category=${category}`;
     fetchNewsFromAPI(url);
   }
 }
 
-// Carica le notizie italiane da GNews
+// GNews API per le notizie italiane
 async function fetchItalianNews(category) {
-  const gNewsAPIKey = 'c3674db69f99957229145b7656d1b845'; // Inserisci la tua chiave GNews
-  const cleanCategory = category.replace('-it', '');
-  const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=it&category=${cleanCategory}&token=${gNewsAPIKey}`;
+  const gNewsAPIKey = 'c3674db69f99957229145b7656d1b845';  // Inserisci la tua chiave
+  const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=it&category=${category}&token=${gNewsAPIKey}`;
 
   try {
     const response = await fetch(gNewsUrl);
@@ -36,7 +35,7 @@ async function fetchItalianNews(category) {
   }
 }
 
-// Carica le notizie internazionali tramite il proxy
+// NewsAPI tramite proxy per notizie internazionali
 async function fetchNewsFromAPI(url) {
   try {
     const response = await fetch(url);
@@ -57,9 +56,7 @@ function displayNews(data) {
       const newsItem = document.createElement('div');
       newsItem.className = 'news-item';
 
-      const publishedDate = article.publishedAt
-        ? new Date(article.publishedAt).toLocaleDateString('it-IT')
-        : 'Data sconosciuta';
+      const publishedDate = new Date(article.publishedAt).toLocaleDateString('it-IT');
 
       newsItem.innerHTML = `
         <div class="news-date">${publishedDate}</div>
@@ -67,7 +64,6 @@ function displayNews(data) {
         <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
         <a href="${article.url}" target="_blank">Leggi di più</a>
       `;
-
       newsContainer.appendChild(newsItem);
     });
   } else {
@@ -75,7 +71,7 @@ function displayNews(data) {
   }
 }
 
-// Gestione menu a tendina (hover: apre, mouse leave: chiude)
+// Gestione apertura/chiusura menu dropdown al passaggio del mouse
 document.querySelectorAll('.dropdown').forEach(dropdown => {
   let timeout;
 
@@ -87,6 +83,6 @@ document.querySelectorAll('.dropdown').forEach(dropdown => {
   dropdown.addEventListener('mouseleave', () => {
     timeout = setTimeout(() => {
       dropdown.querySelector('.submenu').style.display = 'none';
-    }, 500); // si chiude dopo 0.5 secondi dall'uscita del mouse
+    }, 500); // chiude dopo mezzo secondo
   });
 });
