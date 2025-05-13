@@ -1,4 +1,4 @@
-const proxyUrl = 'https://everydaynews.onrender.com';
+const proxyUrl = 'https://everydaynews.onrender.com';  // URL del tuo proxy su Render
 const newsContainer = document.getElementById('news-container');
 
 // Quando clicchi su una voce del sottomenù
@@ -6,16 +6,15 @@ document.querySelectorAll('.submenu li').forEach(item => {
   item.addEventListener('click', () => {
     const category = item.dataset.category;
     const type = item.dataset.type;
-    fetchNews(category, type);
-  });
+    fetchNews(category, type);  // Chiama la funzione per caricare le notizie
 });
 
 async function fetchNews(category, type) {
   if (type === 'italian') {
     fetchItalianNews(category);  // Usa GNews per le notizie italiane
   } else if (type === 'international') {
-    let url = `${proxyUrl}/news?language=en&category=${category}`;
-    fetchNewsFromAPI(url);  // Usa NewsAPI per le notizie internazionali
+    let url = `${proxyUrl}/news?language=en&category=${category}`;  // Chiamata al proxy per notizie internazionali
+    fetchNewsFromAPI(url);  // Usa NewsAPI per le notizie internazionali tramite il proxy
   }
 }
 
@@ -27,7 +26,7 @@ async function fetchItalianNews(category) {
   try {
     const response = await fetch(gNewsUrl);
     const data = await response.json();
-    displayNews(data);
+    displayNews(data);  // Mostra le notizie
   } catch (error) {
     newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie italiane.</p>';
     console.error(error);
@@ -39,7 +38,7 @@ async function fetchNewsFromAPI(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    displayNews(data);
+    displayNews(data);  // Mostra le notizie
   } catch (error) {
     newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie internazionali.</p>';
     console.error(error);
@@ -82,6 +81,6 @@ document.querySelectorAll('.dropdown').forEach(dropdown => {
   dropdown.addEventListener('mouseleave', () => {
     timeout = setTimeout(() => {
       dropdown.querySelector('.submenu').style.display = 'none';
-    }, 500); // Resta visibile per 0.5 secondi dopo che il mouse esce
+    }, 500);  // Resta visibile per 0.5 secondi dopo che il mouse esce
   });
 });
