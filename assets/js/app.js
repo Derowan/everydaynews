@@ -39,4 +39,3 @@ async function fetchNews() {
 
 window.addEventListener('DOMContentLoaded', fetchNews);
 categorySelect.addEventListener('change', fetchNews);
-
