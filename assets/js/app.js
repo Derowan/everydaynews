@@ -1,18 +1,64 @@
 const proxyUrl = 'https://everydaynews.onrender.com';
 const newsContainer = document.getElementById('news-container');
 const categorySelect = document.getElementById('category');
+const filtersDiv = document.getElementById('filters');
+const internationalNewsBtn = document.getElementById('international-news-btn');
+const italianNewsBtn = document.getElementById('italian-news-btn');
 
+let currentNewsType = ''; // 'international' or 'italian'
+
+// Funzione per popolare il menù a discesa
+function populateCategoryMenu() {
+    categorySelect.innerHTML = ''; // Pulisce le categorie esistenti
+
+    let categories = [];
+    if (currentNewsType === 'international') {
+        // Categorie internazionali
+        categories = [
+            { value: 'general', label: 'Generale' },
+            { value: 'business', label: 'Business' },
+            { value: 'entertainment', label: 'Intrattenimento' },
+            { value: 'health', label: 'Salute' },
+            { value: 'science', label: 'Scienza' },
+            { value: 'sports', label: 'Sport' },
+            { value: 'technology', label: 'Tecnologia' }
+        ];
+    } else if (currentNewsType === 'italian') {
+        // Categorie italiane
+        categories = [
+            { value: 'politics', label: 'Politica' },
+            { value: 'business', label: 'Business' },
+            { value: 'entertainment', label: 'Intrattenimento' },
+            { value: 'health', label: 'Salute' },
+            { value: 'science', label: 'Scienza' },
+            { value: 'sports', label: 'Sport' },
+            { value: 'technology', label: 'Tecnologia' }
+        ];
+    }
+
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.value;
+        option.textContent = category.label;
+        categorySelect.appendChild(option);
+    });
+}
+
+// Funzione per caricare le notizie
 async function fetchNews() {
     const category = categorySelect.value;
-    const url = `${proxyUrl}/news?category=${category}`;
+    let url = `${proxyUrl}/news?category=${category}`;
+
+    // Aggiunge il filtro per le notizie italiane se la selezione riguarda l'Italia
+    if (currentNewsType === 'italian') {
+        url = `${proxyUrl}/news?category=${category}&country=it`;
+    }
+
     try {
         const response = await fetch(url);
         const data = await response.json();
+        newsContainer.innerHTML = ''; // Pulisce le notizie precedenti
 
-        // Pulisce il contenitore
-        newsContainer.innerHTML = '';
-
-        // Itera sugli articoli
         data.articles.forEach(article => {
             const newsItem = document.createElement('div');
             newsItem.className = 'news-item';
@@ -27,15 +73,28 @@ async function fetchNews() {
                 <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
                 <a href="${article.url}" target="_blank">Leggi di più</a>
             `;
-
             newsContainer.appendChild(newsItem);
         });
-
     } catch (error) {
         newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie.</p>';
         console.error('Errore fetch:', error);
     }
 }
 
-window.addEventListener('DOMContentLoaded', fetchNews);
-categorySelect.addEventListener('change', fetchNews);
+// Eventi per la selezione delle notizie
+internationalNewsBtn.addEventListener('click', () => {
+    currentNewsType = 'international';
+    filtersDiv.style.display = 'block';  // Mostra il filtro
+    populateCategoryMenu();  // Popola il menù a discesa con le categorie internazionali
+});
+
+italianNewsBtn.addEventListener('click', () => {
+    currentNewsType = 'italian';
+    filtersDiv.style.display = 'block';  // Mostra il filtro
+    populateCategoryMenu();  // Popola il menù a discesa con le categorie italiane
+});
+
+// Carica notizie iniziali
+window.addEventListener('DOMContentLoaded', () => {
+    filtersDiv.style.display = 'none';  // Nasconde inizialmente il filtro
+});
