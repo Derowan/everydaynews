@@ -1,42 +1,92 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EverydayNews</title>
-  <link rel="stylesheet" href="assets/css/style.css" />
-</head>
-<body>
-  <header>
-    <div class="navbar">
-      <div class="logo">EverydayNews</div>
-      <ul class="menu">
-        <li class="dropdown">
-          <a href="#" data-type="italian">Notizie Italiane</a>
-          <ul class="submenu">
-            <li data-category="general" data-type="italian">Generali</li>
-            <li data-category="business" data-type="italian">Business</li>
-            <li data-category="health" data-type="italian">Salute</li>
-            <li data-category="technology" data-type="italian">Tecnologia</li>
-          </ul>
-        </li>
-        <li class="dropdown">
-          <a href="#" data-type="international">Notizie Internazionali</a>
-          <ul class="submenu">
-            <li data-category="general" data-type="international">Generali</li>
-            <li data-category="business" data-type="international">Business</li>
-            <li data-category="health" data-type="international">Salute</li>
-            <li data-category="technology" data-type="international">Tecnologia</li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-  </header>
+const proxyUrl = 'https://everydaynews.onrender.com';
+const newsContainer = document.getElementById('news-container');
 
-  <main>
-    <div id="news-container" class="news-container"></div>
-  </main>
+// Assegna evento clic a ogni voce del sottomenù
+document.querySelectorAll('.submenu li').forEach(item => {
+  item.addEventListener('click', () => {
+    const category = item.dataset.category;
+    const type = item.closest('.dropdown').id === 'italy-dropdown' ? 'italian' : 'international';
+    fetchNews(category, type);
+  });
+});
 
-  <script src="assets/js/app.js"></script>
-</body>
-</html>
+// Carica le notizie in base al tipo
+async function fetchNews(category, type) {
+  if (type === 'italian') {
+    fetchItalianNews(category);
+  } else if (type === 'international') {
+    const url = `${proxyUrl}/news?language=en&category=${category}`;
+    fetchNewsFromAPI(url);
+  }
+}
+
+// Carica le notizie italiane da GNews
+async function fetchItalianNews(category) {
+  const gNewsAPIKey = 'c3674db69f99957229145b7656d1b845'; // Inserisci la tua chiave GNews
+  const cleanCategory = category.replace('-it', '');
+  const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=it&category=${cleanCategory}&token=${gNewsAPIKey}`;
+
+  try {
+    const response = await fetch(gNewsUrl);
+    const data = await response.json();
+    displayNews(data);
+  } catch (error) {
+    newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie italiane.</p>';
+    console.error(error);
+  }
+}
+
+// Carica le notizie internazionali tramite il proxy
+async function fetchNewsFromAPI(url) {
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    displayNews(data);
+  } catch (error) {
+    newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie internazionali.</p>';
+    console.error(error);
+  }
+}
+
+// Mostra le notizie
+function displayNews(data) {
+  newsContainer.innerHTML = '';
+
+  if (data.articles && data.articles.length > 0) {
+    data.articles.forEach(article => {
+      const newsItem = document.createElement('div');
+      newsItem.className = 'news-item';
+
+      const publishedDate = article.publishedAt
+        ? new Date(article.publishedAt).toLocaleDateString('it-IT')
+        : 'Data sconosciuta';
+
+      newsItem.innerHTML = `
+        <div class="news-date">${publishedDate}</div>
+        <h2>${article.title}</h2>
+        <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
+        <a href="${article.url}" target="_blank">Leggi di più</a>
+      `;
+
+      newsContainer.appendChild(newsItem);
+    });
+  } else {
+    newsContainer.innerHTML = '<p>Nessuna notizia trovata.</p>';
+  }
+}
+
+// Gestione menu a tendina (hover: apre, mouse leave: chiude)
+document.querySelectorAll('.dropdown').forEach(dropdown => {
+  let timeout;
+
+  dropdown.addEventListener('mouseenter', () => {
+    clearTimeout(timeout);
+    dropdown.querySelector('.submenu').style.display = 'block';
+  });
+
+  dropdown.addEventListener('mouseleave', () => {
+    timeout = setTimeout(() => {
+      dropdown.querySelector('.submenu').style.display = 'none';
+    }, 500); // si chiude dopo 0.5 secondi dall'uscita del mouse
+  });
+});
