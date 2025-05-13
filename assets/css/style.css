@@ -1,32 +1,27 @@
-/* Sfondo azzurro chiaro per tutta la pagina */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #e0f2f1; /* azzurro chiaro */
+  background-color: #e0f2f1;
 }
 
-/* Header più scuro */
 header {
-  background-color: #0f172a; /* blu molto scuro */
+  background-color: #0f172a;
   padding: 10px 20px;
   color: white;
 }
 
-/* Navbar con logo e menu */
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-/* Logo */
 .logo {
   font-size: 1.5em;
   font-weight: bold;
 }
 
-/* Menu principale */
 .menu {
   list-style: none;
   display: flex;
@@ -39,21 +34,17 @@ header {
   position: relative;
 }
 
-/* Link principali del menu */
-.menu a, .menu button {
+.menu a {
   color: white;
   text-decoration: none;
   font-weight: bold;
   cursor: pointer;
-  background: none;
-  border: none;
 }
 
-/* Sottomenù nascosto di default */
 .submenu {
   display: none;
   position: absolute;
-  background-color: #1e293b; /* leggermente più chiaro dell'header */
+  background-color: #1e293b;
   padding: 10px;
   list-style: none;
   top: 30px;
@@ -61,75 +52,44 @@ header {
   min-width: 180px;
   border-radius: 5px;
   z-index: 1000;
-  transition: display 0.3s ease;
 }
 
-/* Voci del sottomenù */
 .submenu li {
   padding: 8px 10px;
   color: white;
   cursor: pointer;
 }
 
-/* Hover sui sottomenù */
 .submenu li:hover {
   background-color: #334155;
 }
 
-/* Contenitore delle notizie */
 .news-container {
   padding: 20px;
 }
 
-/* Singola notizia */
 .news-item {
   background-color: white;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   margin-bottom: 20px;
   padding: 15px;
-  border-left: 4px solid #0ea5e9; /* azzurro acceso */
+  border-left: 4px solid #0ea5e9;
 }
 
-/* Titolo della notizia */
 .news-item h2 {
   margin-top: 0;
   color: #0f172a;
 }
 
-/* Data della notizia */
 .news-date {
   font-size: 0.9em;
   color: #64748b;
   margin-bottom: 5px;
 }
 
-/* Link alla fonte */
 .news-item a {
   text-decoration: none;
   color: #2563eb;
   font-weight: bold;
-}
-
-/* Responsività */
-@media (max-width: 768px) {
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .menu {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .submenu {
-    position: static;
-    width: 100%;
-    box-shadow: none;
-  }
-
-  .menu li {
-    width: 100%;
-  }
 }
