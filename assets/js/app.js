@@ -11,13 +11,13 @@ document.querySelectorAll('.submenu li').forEach(item => {
 });
 
 async function fetchNews(category, type) {
-  let url = `${proxyUrl}/news?category=${category}`;
+  let url = `${proxyUrl}/news`;
 
-  if (type === 'italian') {
-    url += `&country=it`; // 🔁 RIMOSSO language=it
-  } else if (type === 'international') {
-    url += `&language=en`; // ✅ Mantieni lingua inglese per le internazionali
-  }
+if (type === 'italian') {
+  url += `?country=it&language=it&category=${category}`;
+} else if (type === 'international') {
+  url += `?language=en&category=${category}`;
+}
 
   try {
     const response = await fetch(url);
