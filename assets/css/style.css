@@ -1,69 +1,114 @@
-/* Stile per l'intero contenitore */
-.container {
-    width: 80%;
-    margin: 0 auto;
-    font-family: Arial, sans-serif;
+/* Sfondo azzurro chiaro per tutta la pagina */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #e0f2f1; /* azzurro chiaro */
 }
 
-/* Titolo principale */
-h1 {
-    text-align: center;
-    margin-top: 20px;
+/* Header più scuro */
+header {
+  background-color: #0f172a; /* blu molto scuro */
+  padding: 10px 20px;
+  color: white;
+}
+
+/* Navbar con logo e menu */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.logo {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+/* Menu principale */
+.menu {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+  margin: 0;
+  padding: 0;
+}
+
+.menu li {
+  position: relative;
+}
+
+/* Link principali del menu */
+.menu a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Sottomenù nascosto di default */
+.submenu {
+  display: none;
+  position: absolute;
+  background-color: #1e293b; /* leggermente più chiaro dell'header */
+  padding: 10px;
+  list-style: none;
+  top: 30px;
+  left: 0;
+  min-width: 180px;
+  border-radius: 5px;
+  z-index: 1000;
+}
+
+/* Voci del sottomenù */
+.submenu li {
+  padding: 8px 10px;
+  color: white;
+  cursor: pointer;
+}
+
+/* Hover sui sottomenù */
+.submenu li:hover {
+  background-color: #334155;
+}
+
+/* Mostra il sottomenù al passaggio del mouse */
+.dropdown:hover .submenu {
+  display: block;
 }
 
 /* Contenitore delle notizie */
-#news-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: space-between;
+.news-container {
+  padding: 20px;
 }
 
-/* Card di ogni notizia */
+/* Singola notizia */
 .news-item {
-    width: 30%;
-    border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  padding: 15px;
+  border-left: 4px solid #0ea5e9; /* azzurro acceso */
 }
 
+/* Titolo della notizia */
 .news-item h2 {
-    font-size: 18px;
-    color: #333;
+  margin-top: 0;
+  color: #0f172a;
 }
 
-.news-item p {
-    font-size: 14px;
-    color: #666;
-    margin-top: 10px;
+/* Data della notizia */
+.news-date {
+  font-size: 0.9em;
+  color: #64748b;
+  margin-bottom: 5px;
 }
 
-.news-item .news-date {
-    font-size: 12px;
-    color: #999;
-    margin-bottom: 10px;
-}
-
+/* Link alla fonte */
 .news-item a {
-    display: inline-block;
-    margin-top: 15px;
-    text-decoration: none;
-    color: #0066cc;
-}
-
-.news-item a:hover {
-    text-decoration: underline;
-}
-
-/* Filtro per categoria */
-#filters {
-    margin-bottom: 30px;
-    text-align: center;
-}
-
-#category {
-    padding: 5px 10px;
-    margin-right: 10px;
+  text-decoration: none;
+  color: #2563eb;
+  font-weight: bold;
 }
