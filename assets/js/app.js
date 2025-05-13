@@ -24,7 +24,7 @@ async function fetchNews(category, type) {
 
 // Funzione per le notizie italiane con GNews API
 async function fetchItalianNews(category) {
-  const gNewsAPIKey = 'YOUR_GNEWS_API_KEY';  // Sostituisci con la tua chiave API
+  const gNewsAPIKey = 'c3674db69f99957229145b7656d1b845';  // Sostituisci con la tua chiave API
   const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=IT&category=${category}&token=${gNewsAPIKey}`;
 
   try {
