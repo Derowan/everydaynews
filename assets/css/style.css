@@ -73,11 +73,6 @@ header {
   background-color: #334155;
 }
 
-/* Mostra il sottomenù al passaggio del mouse */
-.dropdown:hover .submenu {
-  display: block;
-}
-
 /* Contenitore delle notizie */
 .news-container {
   padding: 20px;
