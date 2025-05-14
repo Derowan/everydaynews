@@ -54,7 +54,11 @@ async function fetchItalianNews(category) {
     }
   }
 
-  displayNews({ articles: allArticles });
+  // Raggruppa e ordina per fonte
+  const groupedArticles = groupAndSortBySource(allArticles);
+
+  // Visualizza le notizie
+  displayNews(groupedArticles, 'italian');
 }
 
 // Funzione per le notizie internazionali via NewsAPI
@@ -62,50 +66,84 @@ async function fetchNewsFromAPI(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    displayNews(data);
+    displayNews(data, 'international');
   } catch (error) {
     newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie internazionali.</p>';
     console.error(error);
   }
 }
 
-// Funzione per mostrare le notizie
-function displayNews(data, type) {
+// Funzione per raggruppare le notizie per fonte e ordinarle alfabeticamente
+function groupAndSortBySource(articles) {
+  const grouped = {};
+
+  // Raggruppa le notizie per fonte
+  articles.forEach(article => {
+    const source = article.source ? article.source.name : 'Fonte sconosciuta';
+    if (!grouped[source]) {
+      grouped[source] = [];
+    }
+    grouped[source].push(article);
+  });
+
+  // Ordina i gruppi per fonte
+  const sortedSources = Object.keys(grouped).sort();
+
+  // Restituisci le notizie raggruppate e ordinate
+  const sortedGroupedArticles = sortedSources.map(source => {
+    return {
+      source: source,
+      articles: grouped[source]
+    };
+  });
+
+  return sortedGroupedArticles;
+}
+
+// Funzione per mostrare le notizie raggruppate per fonte
+function displayNews(groupedArticles, type) {
   newsContainer.innerHTML = '';
 
-  if (data.articles && data.articles.length > 0) {
-    data.articles.forEach(article => {
-      const newsItem = document.createElement('div');
-      newsItem.className = 'news-item';
+  if (groupedArticles && groupedArticles.length > 0) {
+    groupedArticles.forEach(group => {
+      const sourceHeader = document.createElement('div');
+      sourceHeader.className = 'source-header';
+      sourceHeader.innerHTML = `<h3>Fonte: ${group.source}</h3>`;
+      newsContainer.appendChild(sourceHeader);
 
-      const publishedDate = new Date(article.publishedAt).toLocaleDateString('it-IT');
-      const category = article.category || 'Generale'; // Categoria di default
+      group.articles.forEach(article => {
+        const newsItem = document.createElement('div');
+        newsItem.className = 'news-item';
 
-      // Aggiungi categoria e fonte se esistono
-      const source = article.source ? article.source.name : 'Fonte sconosciuta';
+        const publishedDate = new Date(article.publishedAt).toLocaleDateString('it-IT');
+        const category = article.category || 'Generale'; // Categoria di default
 
-      // Se le notizie sono internazionali, non mostrare la categoria
-      if (type === 'international') {
-        newsItem.innerHTML = `
-          <div class="news-date">${publishedDate}</div>
-          <h2>${article.title}</h2>
-          <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
-          <a href="${article.url}" target="_blank">Leggi di più</a>
-          <div class="news-source">Fonte: ${source}</div>
-        `;
-      } else {
-        // Mostra la categoria solo per le notizie italiane
-        newsItem.innerHTML = `
-          <div class="news-category">${category}</div>
-          <div class="news-date">${publishedDate}</div>
-          <h2>${article.title}</h2>
-          <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
-          <a href="${article.url}" target="_blank">Leggi di più</a>
-          <div class="news-source">Fonte: ${source}</div>
-        `;
-      }
+        // Aggiungi categoria e fonte se esistono
+        const source = article.source ? article.source.name : 'Fonte sconosciuta';
 
-      newsContainer.appendChild(newsItem);
+        // Se le notizie sono internazionali, non mostrare la categoria
+        if (type === 'international') {
+          newsItem.innerHTML = `
+            <div class="news-date">${publishedDate}</div>
+            <h2>${article.title}</h2>
+            <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
+            <a href="${article.url}" target="_blank">Leggi di più</a>
+            <div class="news-source">Fonte: ${source}</div>
+          `;
+        } else {
+          // Mostra la categoria solo per le notizie italiane
+          newsItem.innerHTML = `
+            <div class="news-category">${category}</div>
+            <div class="news-date">${publishedDate}</div>
+            <h2>${article.title}</h2>
+            <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
+            <a href="${article.url}" target="_blank">Leggi di più</a>
+            <div class="news-source">Fonte: ${source}</div>
+          `;
+        }
+
+        newsContainer.appendChild(newsItem);
+      });
     });
   } else {
     newsContainer.innerHTML = '<p>Nessuna notizia trovata.</p>';
