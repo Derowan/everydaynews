@@ -28,16 +28,33 @@ async function fetchNews(category, type) {
 // Funzione per caricare le notizie italiane con GNews (fino a 30 notizie)
 async function fetchItalianNews(category) {
   const gNewsAPIKey = 'c3674db69f99957229145b7656d1b845';
-  const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=it&topic=${category}&token=${gNewsAPIKey}&pageSize=30`; // Ottieni 30 notizie
+  let allArticles = [];
+  let page = 1;
+  const pageSize = 30;
+  let totalArticles = 0;
 
-  try {
-    const response = await fetch(gNewsUrl);
-    const data = await response.json();
-    displayNews(data, 'italian');
-  } catch (error) {
-    newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie italiane.</p>';
-    console.error(error);
+  while (totalArticles < 30) {
+    const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=it&topic=${category}&token=${gNewsAPIKey}&pageSize=${pageSize}&page=${page}`;
+
+    try {
+      const response = await fetch(gNewsUrl);
+      const data = await response.json();
+
+      if (data.articles && data.articles.length > 0) {
+        allArticles = [...allArticles, ...data.articles];
+        totalArticles = allArticles.length;
+        page++;
+      } else {
+        break;
+      }
+    } catch (error) {
+      newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie italiane.</p>';
+      console.error(error);
+      break;
+    }
   }
+
+  displayNews({ articles: allArticles });
 }
 
 // Funzione per le notizie internazionali via NewsAPI
@@ -45,7 +62,7 @@ async function fetchNewsFromAPI(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    displayNews(data, 'international');
+    displayNews(data);
   } catch (error) {
     newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie internazionali.</p>';
     console.error(error);
