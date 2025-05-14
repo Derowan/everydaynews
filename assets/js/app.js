@@ -5,7 +5,7 @@ const newsContainer = document.getElementById('news-container');
 const internationalCategories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology'];
 
 // Categorie supportate da GNews (italiane)
-const italianCategories = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology'];
+const italianCategories = ['world', 'nation', 'business', 'entertainment', 'health', 'science', 'sports', 'technology', 'politics'];
 
 // Eventi click sulle voci del sottomenu
 document.querySelectorAll('.submenu li').forEach(item => {
@@ -33,6 +33,7 @@ async function fetchItalianNews(category) {
   try {
     const response = await fetch(gNewsUrl);
     const data = await response.json();
+    data.articles.forEach(article => article.category = category); // assegna categoria
     displayNews(data);
   } catch (error) {
     newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie italiane.</p>';
@@ -62,10 +63,10 @@ function displayNews(data) {
       newsItem.className = 'news-item';
 
       const publishedDate = new Date(article.publishedAt).toLocaleDateString('it-IT');
-      const category = article.category || 'Generale'; // Categoria di default
+      const category = article.category || 'Generale';
 
       newsItem.innerHTML = `
-        <div class="news-category">${category}</div>
+        <div class="news-category">Categoria: ${category}</div>
         <div class="news-date">${publishedDate}</div>
         <h2>${article.title}</h2>
         <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
