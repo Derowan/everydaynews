@@ -1,6 +1,12 @@
 const proxyUrl = 'https://everydaynews.onrender.com';
 const newsContainer = document.getElementById('news-container');
 
+// Categorie supportate da NewsAPI (internazionale)
+const internationalCategories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology'];
+
+// Categorie supportate da GNews (italiane)
+const italianCategories = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology'];
+
 // Eventi click sulle voci del sottomenu
 document.querySelectorAll('.submenu li').forEach(item => {
   item.addEventListener('click', () => {
@@ -56,8 +62,10 @@ function displayNews(data) {
       newsItem.className = 'news-item';
 
       const publishedDate = new Date(article.publishedAt).toLocaleDateString('it-IT');
+      const category = article.category || 'Generale'; // Categoria di default
 
       newsItem.innerHTML = `
+        <div class="news-category">${category}</div>
         <div class="news-date">${publishedDate}</div>
         <h2>${article.title}</h2>
         <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
