@@ -25,7 +25,7 @@ async function fetchNews(category, type) {
   }
 }
 
-// Funzione per caricare le notizie italiane con GNews
+// Funzione per caricare le notizie italiane con GNews (fino a 30 notizie)
 async function fetchItalianNews(category) {
   const gNewsAPIKey = 'c3674db69f99957229145b7656d1b845';
   const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=it&topic=${category}&token=${gNewsAPIKey}&pageSize=30`; // Ottieni 30 notizie
@@ -33,7 +33,7 @@ async function fetchItalianNews(category) {
   try {
     const response = await fetch(gNewsUrl);
     const data = await response.json();
-    displayNews(data);
+    displayNews(data, 'italian');
   } catch (error) {
     newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie italiane.</p>';
     console.error(error);
@@ -45,7 +45,7 @@ async function fetchNewsFromAPI(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    displayNews(data);
+    displayNews(data, 'international');
   } catch (error) {
     newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie internazionali.</p>';
     console.error(error);
@@ -53,7 +53,7 @@ async function fetchNewsFromAPI(url) {
 }
 
 // Funzione per mostrare le notizie
-function displayNews(data) {
+function displayNews(data, type) {
   newsContainer.innerHTML = '';
 
   if (data.articles && data.articles.length > 0) {
@@ -66,15 +66,28 @@ function displayNews(data) {
 
       // Aggiungi categoria e fonte se esistono
       const source = article.source ? article.source.name : 'Fonte sconosciuta';
-      
-      newsItem.innerHTML = `
-        <div class="news-category">${category}</div>
-        <div class="news-date">${publishedDate}</div>
-        <h2>${article.title}</h2>
-        <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
-        <a href="${article.url}" target="_blank">Leggi di più</a>
-        <div class="news-source">Fonte: ${source}</div>
-      `;
+
+      // Se le notizie sono internazionali, non mostrare la categoria
+      if (type === 'international') {
+        newsItem.innerHTML = `
+          <div class="news-date">${publishedDate}</div>
+          <h2>${article.title}</h2>
+          <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
+          <a href="${article.url}" target="_blank">Leggi di più</a>
+          <div class="news-source">Fonte: ${source}</div>
+        `;
+      } else {
+        // Mostra la categoria solo per le notizie italiane
+        newsItem.innerHTML = `
+          <div class="news-category">${category}</div>
+          <div class="news-date">${publishedDate}</div>
+          <h2>${article.title}</h2>
+          <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
+          <a href="${article.url}" target="_blank">Leggi di più</a>
+          <div class="news-source">Fonte: ${source}</div>
+        `;
+      }
+
       newsContainer.appendChild(newsItem);
     });
   } else {
