@@ -1,74 +1,95 @@
-/* Stile generale */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f9f9f9;
+  background-color: #e0f2f1;
 }
 
-/* Contenitore principale */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
+header {
+  background-color: #0f172a;
+  padding: 10px 20px;
+  color: white;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.menu {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+  margin: 0;
+  padding: 0;
+}
+
+.menu li {
+  position: relative;
+}
+
+.menu a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.submenu {
+  display: none;
+  position: absolute;
+  background-color: #1e293b;
+  padding: 10px;
+  list-style: none;
+  top: 30px;
+  left: 0;
+  min-width: 180px;
+  border-radius: 5px;
+  z-index: 1000;
+}
+
+.submenu li {
+  padding: 8px 10px;
+  color: white;
+  cursor: pointer;
+}
+
+.submenu li:hover {
+  background-color: #334155;
+}
+
+.news-container {
   padding: 20px;
 }
 
-/* Titolo principale */
-h1 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 30px;
-}
-
-/* Filtro categorie */
-#filters {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 30px;
-}
-
-#filters select,
-#filters button {
-  padding: 10px;
-  font-size: 1rem;
-}
-
-/* Griglia delle notizie */
-#news-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: space-around;
-}
-
-/* Singola notizia */
 .news-item {
   background-color: white;
-  padding: 20px;
-  width: 300px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  padding: 15px;
+  border-left: 4px solid #0ea5e9;
 }
 
 .news-item h2 {
-  font-size: 1.1rem;
-  margin-bottom: 10px;
-  color: #222;
+  margin-top: 0;
+  color: #0f172a;
 }
 
-.news-item p {
-  font-size: 0.95rem;
-  color: #555;
-  line-height: 1.4;
+.news-date {
+  font-size: 0.9em;
+  color: #64748b;
+  margin-bottom: 5px;
 }
 
 .news-item a {
-  color: #0066cc;
   text-decoration: none;
-}
-
-.news-item a:hover {
-  text-decoration: underline;
+  color: #2563eb;
+  font-weight: bold;
 }

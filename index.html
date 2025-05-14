@@ -1,37 +1,42 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Everyday News</title>
-
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="assets/css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EverydayNews</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
-    <div class="container">
-        <h1>Notizie del Giorno</h1>
-
-        <!-- Filtro per categoria -->
-        <div id="filters">
-            <label for="category">Scegli una categoria:</label>
-            <select id="category" onchange="fetchNews()">
-                <option value="general">Generale</option>
-                <option value="business">Business</option>
-                <option value="entertainment">Intrattenimento</option>
-                <option value="health">Salute</option>
-                <option value="science">Scienza</option>
-                <option value="sports">Sport</option>
-                <option value="technology">Tecnologia</option>
-            </select>
-            <button onclick="fetchNews()">Carica Notizie</button>
-        </div>
-
-        <!-- Contenitore delle notizie (card) -->
-        <div id="news-container"></div>
+  <header>
+    <div class="navbar">
+      <div class="logo">EverydayNews</div>
+      <ul class="menu">
+        <li class="dropdown">
+          <a href="#" data-type="italian">Notizie Italiane</a>
+          <ul class="submenu">
+            <li data-category="general" data-type="italian">Generali</li>
+            <li data-category="business" data-type="italian">Business</li>
+            <li data-category="health" data-type="italian">Salute</li>
+            <li data-category="technology" data-type="italian">Tecnologia</li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" data-type="international">Notizie Internazionali</a>
+          <ul class="submenu">
+            <li data-category="general" data-type="international">Generali</li>
+            <li data-category="business" data-type="international">Business</li>
+            <li data-category="health" data-type="international">Salute</li>
+            <li data-category="technology" data-type="international">Tecnologia</li>
+          </ul>
+        </li>
+      </ul>
     </div>
+  </header>
 
-    <script src="assets/js/app.js"></script>
+  <main>
+    <div id="news-container" class="news-container"></div>
+  </main>
+
+  <script src="assets/js/app.js"></script>
 </body>
 </html>
