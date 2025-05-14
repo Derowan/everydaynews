@@ -1,6 +1,12 @@
 const proxyUrl = 'https://everydaynews.onrender.com';
 const newsContainer = document.getElementById('news-container');
 
+// Categorie supportate da NewsAPI (internazionale)
+const internationalCategories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology'];
+
+// Categorie supportate da GNews (italiane)
+const italianCategories = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology'];
+
 // Eventi click sulle voci del sottomenu
 document.querySelectorAll('.submenu li').forEach(item => {
   item.addEventListener('click', () => {
