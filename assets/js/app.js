@@ -5,7 +5,7 @@ const newsContainer = document.getElementById('news-container');
 const internationalCategories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology'];
 
 // Categorie supportate da GNews (italiane)
-const italianCategories = ['world', 'nation', 'business', 'entertainment', 'health', 'science', 'sports', 'technology', 'politics'];
+const italianCategories = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology', 'politics'];
 
 // Eventi click sulle voci del sottomenu
 document.querySelectorAll('.submenu li').forEach(item => {
@@ -33,8 +33,7 @@ async function fetchItalianNews(category) {
   try {
     const response = await fetch(gNewsUrl);
     const data = await response.json();
-    data.articles.forEach(article => article.category = category); // assegna categoria
-    displayNews(data);
+    displayNews(data, category, 'GNews');
   } catch (error) {
     newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie italiane.</p>';
     console.error(error);
@@ -46,7 +45,7 @@ async function fetchNewsFromAPI(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    displayNews(data);
+    displayNews(data, null, 'NewsAPI');
   } catch (error) {
     newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie internazionali.</p>';
     console.error(error);
@@ -54,7 +53,7 @@ async function fetchNewsFromAPI(url) {
 }
 
 // Funzione per mostrare le notizie
-function displayNews(data) {
+function displayNews(data, categoryOverride, source) {
   newsContainer.innerHTML = '';
 
   if (data.articles && data.articles.length > 0) {
@@ -63,7 +62,8 @@ function displayNews(data) {
       newsItem.className = 'news-item';
 
       const publishedDate = new Date(article.publishedAt).toLocaleDateString('it-IT');
-      const category = article.category || 'Generale';
+      const category = categoryOverride || article.category || 'Generale';
+      const sourceName = article.source && article.source.name ? article.source.name : source;
 
       newsItem.innerHTML = `
         <div class="news-category">Categoria: ${category}</div>
@@ -71,6 +71,7 @@ function displayNews(data) {
         <h2>${article.title}</h2>
         <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
         <a href="${article.url}" target="_blank">Leggi di più</a>
+        <div class="news-source">Fonte: ${sourceName}</div>
       `;
       newsContainer.appendChild(newsItem);
     });
