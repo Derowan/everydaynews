@@ -62,8 +62,10 @@ function displayNews(data) {
       newsItem.className = 'news-item';
 
       const publishedDate = new Date(article.publishedAt).toLocaleDateString('it-IT');
+      const category = article.category || 'Generale'; // Categoria di default
 
       newsItem.innerHTML = `
+        <div class="news-category">${category}</div>
         <div class="news-date">${publishedDate}</div>
         <h2>${article.title}</h2>
         <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
