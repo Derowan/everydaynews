@@ -1,5 +1,28 @@
 const proxyUrl = 'https://everydaynews.onrender.com';
 const newsContainer = document.getElementById('news-container');
+const sourceFilterContainer = document.getElementById('source-filter') || createSourceFilterContainer();
+let currentArticles = [];
+
+function createSourceFilterContainer() {
+  const container = document.createElement('div');
+  container.id = 'source-filter';
+  container.innerHTML = '<label for="source-select">Filtra per fonte:</label> <select id="source-select"><option value="all">Tutte</option></select>';
+  newsContainer.parentNode.insertBefore(container, newsContainer);
+  document.getElementById('source-select').addEventListener('change', () => filterBySource());
+  return container;
+}
+
+function updateSourceFilter(articles) {
+  const select = document.getElementById('source-select');
+  const sources = [...new Set(articles.map(a => a.source?.name || 'Fonte sconosciuta'))];
+  select.innerHTML = '<option value="all">Tutte</option>' + sources.map(s => `<option value="${s}">${s}</option>`).join('');
+}
+
+function filterBySource() {
+  const selectedSource = document.getElementById('source-select').value;
+  const filteredArticles = selectedSource === 'all' ? currentArticles : currentArticles.filter(a => (a.source?.name || 'Fonte sconosciuta') === selectedSource);
+  displayNews({ articles: filteredArticles }, 'filtered');
+}
 
 // Categorie supportate da NewsAPI (internazionale)
 const internationalCategories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology'];
@@ -77,9 +100,12 @@ async function fetchNewsFromAPI(url) {
 // Funzione per mostrare le notizie
 function displayNews(data, type) {
   newsContainer.innerHTML = '';
+  currentArticles = data.articles || [];
 
-  if (data.articles && data.articles.length > 0) {
-    data.articles.forEach(article => {
+  updateSourceFilter(currentArticles);
+
+  if (currentArticles.length > 0) {
+    currentArticles.forEach(article => {
       const newsItem = document.createElement('div');
       newsItem.className = 'news-item';
 
