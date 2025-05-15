@@ -65,9 +65,7 @@ header {
   cursor: pointer;
 }
 
-.submenu li:hover {
-  background-color: #334155;
-}
+
 
 .news-container {
   display: grid;
