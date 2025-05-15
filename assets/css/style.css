@@ -13,13 +13,13 @@ header {
 
 .navbar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
 }
 
 .logo {
   font-size: 1.5em;
   font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .menu {
@@ -28,6 +28,13 @@ header {
   gap: 30px;
   margin: 0;
   padding: 0;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.menu.second-row {
+  margin-top: 10px;
+  justify-content: flex-start; /* Allinea a sinistra */
 }
 
 .menu li {
@@ -66,23 +73,15 @@ header {
 
 .news-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* 300px * 0.6 = 180px */
-  gap: 12px; /* ridotto da 20px */
-  padding: 12px; /* ridotto da 20px */
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  padding: 12px;
 }
 
 .news-item {
-  padding: 9px; /* da 15px a 9px circa (40% meno) */
+  padding: 9px;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* leggermente meno intenso */
-  background-color: white;
-  position: relative;
-}
-
-.news-item {
-  padding: 9px; /* da 15px a 9px circa (40% meno) */
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* leggermente meno intenso */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   background-color: white;
   position: relative;
 }
@@ -106,7 +105,8 @@ header {
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-#source-select:hover, #source-select:focus {
+#source-select:hover,
+#source-select:focus {
   border-color: #2563eb;
   box-shadow: 0 0 5px #2563ebaa;
   outline: none;
