@@ -77,35 +77,35 @@ header {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 10px; /* Ridotto padding per altezza minore */
   position: relative;
-  height: 200px; /* Altezza fissa più contenuta */
+  height: 250px; /* Altezza fissa più contenuta */
   overflow: hidden; /* Evita che il contenuto esca */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.news-category {
+.news-category {  /*testo della categoria*/
   font-size: 0.6em;
   color: #0f172a;
   font-weight: bold;
   margin-bottom: 5px; /* Ridotto il margine */
 }
 
-.news-item h2 {
+.news-item h2 { /* testo del titolo*/
   margin: 5px 0;
-  font-size: 0.9em; /* Ridotta dimensione del titolo */
+  font-size: 0.9em;
   color: #0f172a;
 }
 
-.news-date {
-  font-size: 0.75em; /* Ridotta dimensione testo */
+.news-date { /* data della notizia */
+  font-size: 0.70em;
   color: #64748b;
   margin-bottom: 5px;
 }
 
-.news-item p {
+.news-item p { /* testo anteprima della notizia */
   font-size: 0.8em;
-  margin: 5px 0;
+  margin: 3px 0;
   flex-grow: 1;
 }
 
