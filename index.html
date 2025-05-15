@@ -38,10 +38,21 @@
         <li><a href="#" id="meteo-link">Meteo</a></li>
         <li><a href="#" id="crypto-link">Crypto</a></li>
       </ul>
-      </div>
+    </div>
   </header>
 
   <main>
+    <div id="welcome-image" style="text-align:center; margin-top: 50px;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/8/85/News-paper-icon.svg" alt="Giornale Stilizzato" style="width:150px; opacity:0.7;">
+    </div>
+
+    <div id="source-filter" style="display:none; margin: 10px 20px; font-size: 0.9em; font-weight: bold; color: #0f172a; display: flex; align-items: center; gap: 10px;">
+      <label for="source-select">Filtra per fonte:</label>
+      <select id="source-select" style="padding: 5px 10px; border-radius: 5px; border: 1px solid #94a3b8; font-size: 0.9em;">
+        <option value="all">Tutte</option>
+      </select>
+    </div>
+
     <div id="news-container" class="news-container"></div>
   </main>
 
