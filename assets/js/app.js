@@ -1,7 +1,21 @@
 const proxyUrl = 'https://everydaynews.onrender.com';
 const newsContainer = document.getElementById('news-container');
 const sourceFilterContainer = document.getElementById('source-filter') || createSourceFilterContainer();
+const paginationContainer = document.getElementById('pagination') || createPaginationContainer();
 let currentArticles = [];
+let currentPage = 1;
+const articlesPerPage = 30;
+
+const italianCategoryLabels = {
+  general: 'Generale',
+  business: 'Economia',
+  entertainment: 'Intrattenimento',
+  health: 'Salute',
+  science: 'Scienza',
+  sports: 'Sport',
+  technology: 'Tecnologia',
+  politics: 'Politica'
+};
 
 function createSourceFilterContainer() {
   const container = document.createElement('div');
@@ -12,25 +26,31 @@ function createSourceFilterContainer() {
   return container;
 }
 
+function createPaginationContainer() {
+  const container = document.createElement('div');
+  container.id = 'pagination';
+  newsContainer.parentNode.appendChild(container);
+  return container;
+}
+
 function updateSourceFilter(articles) {
   const select = document.getElementById('source-select');
   const sources = [...new Set(articles.map(a => a.source?.name || 'Fonte sconosciuta'))];
   select.innerHTML = '<option value="all">Tutte</option>' + sources.map(s => `<option value="${s}">${s}</option>`).join('');
+  select.value = 'all'; // Reset filtro a "Tutte"
 }
 
 function filterBySource() {
   const selectedSource = document.getElementById('source-select').value;
   const filteredArticles = selectedSource === 'all' ? currentArticles : currentArticles.filter(a => (a.source?.name || 'Fonte sconosciuta') === selectedSource);
-  displayNews({ articles: filteredArticles }, 'filtered');
+  currentPage = 1;
+  renderPage(filteredArticles);
+  updatePagination(filteredArticles);
 }
 
-// Categorie supportate da NewsAPI (internazionale)
 const internationalCategories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology'];
-
-// Categorie supportate da GNews (italiane)
 const italianCategories = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology', 'politics'];
 
-// Eventi click sulle voci del sottomenu
 document.querySelectorAll('.submenu li').forEach(item => {
   item.addEventListener('click', () => {
     const category = item.dataset.category;
@@ -48,13 +68,12 @@ async function fetchNews(category, type) {
   }
 }
 
-// Funzione per caricare le notizie italiane con GNews (tutte le disponibili)
 async function fetchItalianNews(category) {
   const gNewsAPIKey = 'c3674db69f99957229145b7656d1b845';
   let allArticles = [];
   let page = 1;
   const pageSize = 100;
-  let maxPages = 10; // Limite massimo per evitare loop infiniti
+  let maxPages = 10;
 
   while (page <= maxPages) {
     const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=it&topic=${category}&token=${gNewsAPIKey}&pageSize=${pageSize}&page=${page}`;
@@ -64,7 +83,6 @@ async function fetchItalianNews(category) {
       const data = await response.json();
 
       if (data.articles && data.articles.length > 0) {
-        // Inserisci categoria manualmente
         const articlesWithCategory = data.articles.map(article => ({
           ...article,
           category: category
@@ -82,68 +100,77 @@ async function fetchItalianNews(category) {
     }
   }
 
-  displayNews({ articles: allArticles }, 'italian');
+  currentArticles = allArticles;
+  updateSourceFilter(currentArticles);
+  currentPage = 1;
+  renderPage(currentArticles);
+  updatePagination(currentArticles);
 }
 
-// Funzione per le notizie internazionali via NewsAPI
 async function fetchNewsFromAPI(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    displayNews(data, 'international');
+    currentArticles = data.articles || [];
+    updateSourceFilter(currentArticles);
+    currentPage = 1;
+    renderPage(currentArticles);
+    updatePagination(currentArticles);
   } catch (error) {
     newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie internazionali.</p>';
     console.error(error);
   }
 }
 
-// Funzione per mostrare le notizie
-function displayNews(data, type) {
+function renderPage(articles) {
   newsContainer.innerHTML = '';
-  currentArticles = data.articles || [];
+  const start = (currentPage - 1) * articlesPerPage;
+  const end = start + articlesPerPage;
+  const paginatedArticles = articles.slice(start, end);
 
-  updateSourceFilter(currentArticles);
-
-  if (currentArticles.length > 0) {
-    currentArticles.forEach(article => {
-      const newsItem = document.createElement('div');
-      newsItem.className = 'news-item';
-
-      const publishedDate = new Date(article.publishedAt).toLocaleDateString('it-IT');
-      const category = article.category ? article.category.charAt(0).toUpperCase() + article.category.slice(1) : 'Generale';
-
-      // Aggiungi categoria e fonte se esistono
-      const source = article.source ? article.source.name : 'Fonte sconosciuta';
-
-      // Se le notizie sono internazionali, non mostrare la categoria
-      if (type === 'international') {
-        newsItem.innerHTML = `
-          <div class="news-date">${publishedDate}</div>
-          <h2>${article.title}</h2>
-          <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
-          <a href="${article.url}" target="_blank">Leggi di più</a>
-          <div class="news-source">Fonte: ${source}</div>
-        `;
-      } else {
-        // Mostra la categoria solo per le notizie italiane
-        newsItem.innerHTML = `
-          <div class="news-category">${category}</div>
-          <div class="news-date">${publishedDate}</div>
-          <h2>${article.title}</h2>
-          <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
-          <a href="${article.url}" target="_blank">Leggi di più</a>
-          <div class="news-source">Fonte: ${source}</div>
-        `;
-      }
-
-      newsContainer.appendChild(newsItem);
-    });
-  } else {
+  if (paginatedArticles.length === 0) {
     newsContainer.innerHTML = '<p>Nessuna notizia trovata.</p>';
+    return;
+  }
+
+  paginatedArticles.forEach(article => {
+    const newsItem = document.createElement('div');
+    newsItem.className = 'news-item';
+
+    const publishedDate = new Date(article.publishedAt).toLocaleDateString('it-IT');
+    const rawCategory = article.category || 'general';
+    const category = italianCategoryLabels[rawCategory] || 'Generale';
+    const source = article.source ? article.source.name : 'Fonte sconosciuta';
+
+    newsItem.innerHTML = `
+      <div class="news-category">${category}</div>
+      <div class="news-date">${publishedDate}</div>
+      <h2>${article.title}</h2>
+      <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
+      <a href="${article.url}" target="_blank">Leggi di più</a>
+      <div class="news-source">Fonte: ${source}</div>
+    `;
+
+    newsContainer.appendChild(newsItem);
+  });
+}
+
+function updatePagination(articles) {
+  paginationContainer.innerHTML = '';
+  const totalPages = Math.ceil(articles.length / articlesPerPage);
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement('button');
+    btn.textContent = i;
+    btn.className = i === currentPage ? 'active' : '';
+    btn.addEventListener('click', () => {
+      currentPage = i;
+      renderPage(articles);
+    });
+    paginationContainer.appendChild(btn);
   }
 }
 
-// Gestione apertura/chiusura del menu a discesa
 document.querySelectorAll('.dropdown').forEach(dropdown => {
   let timeout;
 
