@@ -41,7 +41,13 @@ async function fetchItalianNews(category) {
       const data = await response.json();
 
       if (data.articles && data.articles.length > 0) {
-        allArticles = [...allArticles, ...data.articles];
+        // Inserisci categoria manualmente
+        const articlesWithCategory = data.articles.map(article => ({
+          ...article,
+          category: category
+        }));
+
+        allArticles = [...allArticles, ...articlesWithCategory];
         page++;
       } else {
         break;
@@ -53,7 +59,7 @@ async function fetchItalianNews(category) {
     }
   }
 
-  displayNews({ articles: allArticles });
+  displayNews({ articles: allArticles }, 'italian');
 }
 
 // Funzione per le notizie internazionali via NewsAPI
@@ -61,7 +67,7 @@ async function fetchNewsFromAPI(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    displayNews(data);
+    displayNews(data, 'international');
   } catch (error) {
     newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie internazionali.</p>';
     console.error(error);
@@ -78,7 +84,7 @@ function displayNews(data, type) {
       newsItem.className = 'news-item';
 
       const publishedDate = new Date(article.publishedAt).toLocaleDateString('it-IT');
-      const category = article.category || 'Generale'; // Categoria di default
+      const category = article.category ? article.category.charAt(0).toUpperCase() + article.category.slice(1) : 'Generale';
 
       // Aggiungi categoria e fonte se esistono
       const source = article.source ? article.source.name : 'Fonte sconosciuta';
