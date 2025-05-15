@@ -1,10 +1,11 @@
+// === CONFIGURAZIONI INIZIALI ===
 const proxyUrl = 'https://everydaynews.onrender.com';
 const newsContainer = document.getElementById('news-container');
-const sourceFilterContainer = document.getElementById('source-filter') || createSourceFilterContainer();
 const paginationContainer = document.getElementById('pagination') || createPaginationContainer();
 let currentArticles = [];
 let currentPage = 1;
 const articlesPerPage = 30;
+let currentSource = null;
 
 const italianCategoryLabels = {
   general: 'Generale',
@@ -17,40 +18,7 @@ const italianCategoryLabels = {
   politics: 'Politica'
 };
 
-function createSourceFilterContainer() {
-  const container = document.createElement('div');
-  container.id = 'source-filter';
-  container.innerHTML = '<label for="source-select">Filtra per fonte:</label> <select id="source-select"><option value="all">Tutte</option></select>';
-  newsContainer.parentNode.insertBefore(container, newsContainer);
-  document.getElementById('source-select').addEventListener('change', () => filterBySource());
-  return container;
-}
-
-function createPaginationContainer() {
-  const container = document.createElement('div');
-  container.id = 'pagination';
-  newsContainer.parentNode.appendChild(container);
-  return container;
-}
-
-function updateSourceFilter(articles) {
-  const select = document.getElementById('source-select');
-  const sources = [...new Set(articles.map(a => a.source?.name || 'Fonte sconosciuta'))];
-  select.innerHTML = '<option value="all">Tutte</option>' + sources.map(s => `<option value="${s}">${s}</option>`).join('');
-  select.value = 'all'; // Reset filtro a "Tutte"
-}
-
-function filterBySource() {
-  const selectedSource = document.getElementById('source-select').value;
-  const filteredArticles = selectedSource === 'all' ? currentArticles : currentArticles.filter(a => (a.source?.name || 'Fonte sconosciuta') === selectedSource);
-  currentPage = 1;
-  renderPage(filteredArticles);
-  updatePagination(filteredArticles);
-}
-
-const internationalCategories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology'];
-const italianCategories = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology', 'politics'];
-
+// === MENU CATEGORIE ===
 document.querySelectorAll('.submenu li').forEach(item => {
   item.addEventListener('click', () => {
     const category = item.dataset.category;
@@ -59,6 +27,43 @@ document.querySelectorAll('.submenu li').forEach(item => {
   });
 });
 
+// === CREAZIONE CONTENITORI ===
+function createPaginationContainer() {
+  const container = document.createElement('div');
+  container.id = 'pagination';
+  newsContainer.parentNode.appendChild(container);
+  return container;
+}
+
+// === GESTIONE MENU FONTI ===
+function populateSourceMenu(sources) {
+  const sourceMenu = document.getElementById('source-menu');
+  sourceMenu.innerHTML = '<li data-source="all">Tutte</li>'; // Reset
+
+  sources.forEach(source => {
+    const li = document.createElement('li');
+    li.textContent = source;
+    li.setAttribute('data-source', source);
+    sourceMenu.appendChild(li);
+  });
+}
+
+document.getElementById('source-menu').addEventListener('click', (e) => {
+  if (e.target.tagName === 'LI') {
+    const source = e.target.getAttribute('data-source');
+    currentSource = source === 'all' ? null : source;
+    currentPage = 1;
+    renderPage(filterArticles(currentArticles));
+    updatePagination(filterArticles(currentArticles));
+  }
+});
+
+function filterArticles(articles) {
+  if (!currentSource || currentSource === 'all') return articles;
+  return articles.filter(a => (a.source?.name || 'Fonte sconosciuta') === currentSource);
+}
+
+// === FETCH NOTIZIE ===
 async function fetchNews(category, type) {
   if (type === 'italian') {
     fetchItalianNews(category);
@@ -73,7 +78,7 @@ async function fetchItalianNews(category) {
   let allArticles = [];
   let page = 1;
   const pageSize = 100;
-  let maxPages = 10;
+  const maxPages = 10;
 
   while (page <= maxPages) {
     const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=it&topic=${category}&token=${gNewsAPIKey}&pageSize=${pageSize}&page=${page}`;
@@ -87,7 +92,6 @@ async function fetchItalianNews(category) {
           ...article,
           category: category
         }));
-
         allArticles = [...allArticles, ...articlesWithCategory];
         page++;
       } else {
@@ -101,10 +105,10 @@ async function fetchItalianNews(category) {
   }
 
   currentArticles = allArticles;
-  updateSourceFilter(currentArticles);
+  populateSourceMenu([...new Set(allArticles.map(a => a.source?.name || 'Fonte sconosciuta'))]);
   currentPage = 1;
-  renderPage(currentArticles);
-  updatePagination(currentArticles);
+  renderPage(filterArticles(currentArticles));
+  updatePagination(filterArticles(currentArticles));
 }
 
 async function fetchNewsFromAPI(url) {
@@ -112,16 +116,17 @@ async function fetchNewsFromAPI(url) {
     const response = await fetch(url);
     const data = await response.json();
     currentArticles = data.articles || [];
-    updateSourceFilter(currentArticles);
+    populateSourceMenu([...new Set(currentArticles.map(a => a.source?.name || 'Fonte sconosciuta'))]);
     currentPage = 1;
-    renderPage(currentArticles);
-    updatePagination(currentArticles);
+    renderPage(filterArticles(currentArticles));
+    updatePagination(filterArticles(currentArticles));
   } catch (error) {
     newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie internazionali.</p>';
     console.error(error);
   }
 }
 
+// === RENDER PAGINE ===
 function renderPage(articles) {
   newsContainer.innerHTML = '';
   const start = (currentPage - 1) * articlesPerPage;
@@ -165,20 +170,19 @@ function updatePagination(articles) {
     btn.className = i === currentPage ? 'active' : '';
     btn.addEventListener('click', () => {
       currentPage = i;
-      renderPage(articles);
+      renderPage(filterArticles(currentArticles));
     });
     paginationContainer.appendChild(btn);
   }
 }
 
+// === GESTIONE MENU HOVER ===
 document.querySelectorAll('.dropdown').forEach(dropdown => {
   let timeout;
-
   dropdown.addEventListener('mouseenter', () => {
     clearTimeout(timeout);
     dropdown.querySelector('.submenu').style.display = 'block';
   });
-
   dropdown.addEventListener('mouseleave', () => {
     timeout = setTimeout(() => {
       dropdown.querySelector('.submenu').style.display = 'none';
