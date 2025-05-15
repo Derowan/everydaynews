@@ -1,2 +1,3 @@
-// la PATCH 3 funziona
-//la PATCH 4 sta sviluppando un filtro per fonte, ho esaurito le richieste giornaliere gratuite
+// Grafica è il branch su cui lavoro, main è aggiornato e anche Backup
+// aggiugnere meteo e crypto (e altre api, cerca api gratsi su chatgpt
+//Aggiungere tasto home e menù dropdown (meteo, notizie) da collegare poi con le API
