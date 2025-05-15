@@ -140,6 +140,7 @@ header {
 #source-filter {
   margin: 10px 20px;
   font-size: 0.9em;
+  font-weight: bold;
   color: #0f172a;
   display: flex;
   align-items: center;
