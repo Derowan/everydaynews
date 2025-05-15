@@ -43,8 +43,6 @@ header {
   padding: 0;
 }
 
-
-
 .menu li {
   position: relative;
 }
@@ -75,7 +73,11 @@ header {
   cursor: pointer;
 }
 
-
+/* aggiunta per immagine benvenuto */
+#welcome-image img {
+  cursor: default;
+  user-select: none;
+}
 
 .news-container {
   display: grid;
