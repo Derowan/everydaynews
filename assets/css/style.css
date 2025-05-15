@@ -77,7 +77,7 @@ header {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 10px; /* Ridotto padding per altezza minore */
   position: relative;
-  height: 280px; /* Altezza fissa più contenuta */
+  height: 250px; /* Altezza fissa più contenuta */
   overflow: hidden; /* Evita che il contenuto esca */
   display: flex;
   flex-direction: column;
@@ -122,3 +122,4 @@ header {
   color: #475569;
   margin-top: 5px;
 }
+
