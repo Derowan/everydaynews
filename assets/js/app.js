@@ -25,15 +25,15 @@ async function fetchNews(category, type) {
   }
 }
 
-// Funzione per caricare le notizie italiane con GNews (fino a 30 notizie)
+// Funzione per caricare le notizie italiane con GNews (tutte le disponibili)
 async function fetchItalianNews(category) {
   const gNewsAPIKey = 'c3674db69f99957229145b7656d1b845';
   let allArticles = [];
   let page = 1;
-  const pageSize = 30;
-  let totalArticles = 0;
+  const pageSize = 100;
+  let maxPages = 10; // Limite massimo per evitare loop infiniti
 
-  while (totalArticles < 30) {
+  while (page <= maxPages) {
     const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=it&topic=${category}&token=${gNewsAPIKey}&pageSize=${pageSize}&page=${page}`;
 
     try {
@@ -42,7 +42,6 @@ async function fetchItalianNews(category) {
 
       if (data.articles && data.articles.length > 0) {
         allArticles = [...allArticles, ...data.articles];
-        totalArticles = allArticles.length;
         page++;
       } else {
         break;
