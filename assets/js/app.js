@@ -23,6 +23,9 @@ function createSourceFilterContainer() {
   container.style.margin = '10px 20px';
   container.style.fontWeight = 'bold';
   container.style.color = '#0f172a';
+  container.style.display = 'none'; // Nascondi inizialmente
+  container.style.alignItems = 'center';
+  container.style.gap = '10px';
   container.innerHTML = `
     <label for="source-select">Filtra per fonte:</label>
     <select id="source-select" style="padding:5px 10px; border-radius:5px; border:1px solid #94a3b8; font-size:0.9em;">
@@ -47,6 +50,12 @@ function createPaginationContainer() {
 function updateSourceFilter(articles) {
   const select = document.getElementById('source-select');
   const sources = [...new Set(articles.map(a => a.source?.name || 'Fonte sconosciuta'))];
+  if (sources.length <= 1) {
+    // Nascondi filtro se 0 o 1 fonte
+    sourceFilterContainer.style.display = 'none';
+    return;
+  }
+  sourceFilterContainer.style.display = 'flex';
   select.innerHTML = '<option value="all">Tutte</option>' + sources.map(s => `<option value="${s}">${s}</option>`).join('');
   select.value = 'all'; // Reset filtro a "Tutte"
 }
@@ -160,7 +169,11 @@ function renderPage(articles) {
     const category = italianCategoryLabels[rawCategory] || 'Generale';
     const source = article.source ? article.source.name : 'Fonte sconosciuta';
 
+    // Gestione immagine: alcuni usano urlToImage, altri image
+    const imageUrl = article.urlToImage || article.image || '';
+
     newsItem.innerHTML = `
+      ${imageUrl ? `<img src="${imageUrl}" alt="Immagine articolo" class="news-image">` : ''}
       <div class="news-category">${category}</div>
       <div class="news-date">${publishedDate}</div>
       <h2 title="${article.title}">${article.title}</h2>
@@ -221,5 +234,7 @@ document.getElementById('logo-link').addEventListener('click', (e) => {
   if (sourceFilterContainer) {
     const select = document.getElementById('source-select');
     if (select) select.value = 'all';
+    sourceFilterContainer.style.display = 'none'; // Nascondi filtro
   }
 });
+
