@@ -185,3 +185,12 @@ document.querySelectorAll('.dropdown').forEach(dropdown => {
     }, 500);
   });
 });
+document.getElementById('logo-link').addEventListener('click', (e) => {
+  e.preventDefault();
+  newsContainer.innerHTML = '';
+  if (paginationContainer) paginationContainer.innerHTML = '';
+  if (sourceFilterContainer) {
+    const select = document.getElementById('source-select');
+    if (select) select.value = 'all';
+  }
+});
