@@ -122,4 +122,17 @@ header {
   color: #475569;
   margin-top: 5px;
 }
+#source-menu {
+  max-height: 200px;
+  overflow-y: auto;
+}
 
+#source-menu li {
+  padding: 8px 10px;
+  color: white;
+  cursor: pointer;
+}
+
+#source-menu li:hover {
+  background-color: #334155;
+}
