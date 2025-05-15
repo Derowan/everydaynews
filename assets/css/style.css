@@ -135,6 +135,8 @@ header {
   color: #475569;
   margin-top: 5px;
 }
+
+/* filtro fonti */
 #source-filter {
   margin: 10px 20px;
   font-size: 0.9em;
@@ -144,6 +146,7 @@ header {
   gap: 10px;
 }
 
+/* filtro fonti */
 #source-select {
   padding: 5px 10px;
   border-radius: 5px;
