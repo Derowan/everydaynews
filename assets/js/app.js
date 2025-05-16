@@ -34,7 +34,7 @@ function createSourceFilterContainer() {
     </select>
   `;
   newsContainer.parentNode.insertBefore(container, newsContainer);
-  document.getElementById('source-select').addEventListener('change', () => filterBySource());
+  document.getElementById('source-select').addEventListener('change', filterBySource);
   return container;
 }
 
@@ -50,28 +50,25 @@ function createPaginationContainer() {
 
 function updateSourceFilter(articles) {
   const select = document.getElementById('source-select');
-  const sources = [...new Set(articles.map(a => a.source?.name?.trim() || 'Fonte sconosciuta'))];
+  const sources = [...new Set(articles.map(a => (a.source?.name || 'Fonte sconosciuta').trim()))];
   if (sources.length <= 1) {
     sourceFilterContainer.style.display = 'none';
     return;
   }
   sourceFilterContainer.style.display = 'flex';
-  select.innerHTML = '<option value="all">Tutte</option>' + 
-    sources.map(s => `<option value="${encodeURIComponent(s)}">${s}</option>`).join('');
+  select.innerHTML = '<option value="all">Tutte</option>' + sources
+    .map(s => `<option value="${encodeURIComponent(s)}">${s}</option>`)
+    .join('');
   select.value = 'all';
 }
 
 function filterBySource() {
-  const select = document.getElementById('source-select');
-  const selectedValue = decodeURIComponent(select.value);
-
-  filteredArticles = selectedValue === 'all'
-    ? currentArticles
-    : currentArticles.filter(a => (a.source?.name?.trim() || 'Fonte sconosciuta') === selectedValue);
-
+  const encoded = document.getElementById('source-select').value;
+  const selected = decodeURIComponent(encoded);
+  const list = selected === 'all' ? currentArticles : currentArticles.filter(a => (a.source?.name || 'Fonte sconosciuta').trim() === selected);
   currentPage = 1;
-  renderPage(filteredArticles);
-  updatePagination(filteredArticles);
+  renderPage(list);
+  updatePagination(list);
 }
 
 const internationalCategories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology'];
@@ -81,191 +78,94 @@ document.querySelectorAll('.submenu li').forEach(item => {
   item.addEventListener('click', () => {
     const welcomeImage = document.getElementById('welcome-image');
     if (welcomeImage) welcomeImage.style.display = 'none';
-
-    const category = item.dataset.category;
-    const type = item.dataset.type;
-    fetchNews(category, type);
+    fetchNews(item.dataset.category, item.dataset.type);
   });
 });
 
 document.querySelectorAll('.dropdown').forEach(dropdown => {
   let timeout;
-
-  dropdown.addEventListener('mouseenter', () => {
-    clearTimeout(timeout);
-    dropdown.querySelector('.submenu').style.display = 'block';
-  });
-
+  dropdown.addEventListener('mouseenter', () => { clearTimeout(timeout); dropdown.querySelector('.submenu').style.display = 'block'; });
   dropdown.addEventListener('mouseleave', () => {
-    timeout = setTimeout(() => {
-      dropdown.querySelector('.submenu').style.display = 'none';
-    }, 500);
+    timeout = setTimeout(() => dropdown.querySelector('.submenu').style.display = 'none', 500);
   });
 });
 
-document.getElementById('logo-link').addEventListener('click', (e) => {
+document.getElementById('logo-link').addEventListener('click', e => {
   e.preventDefault();
   newsContainer.innerHTML = '';
   paginationContainer.innerHTML = '';
-  if (sourceFilterContainer) {
-    const select = document.getElementById('source-select');
-    if (select) select.value = 'all';
-    sourceFilterContainer.style.display = 'none';
-  }
+  document.getElementById('source-select').value = 'all';
+  sourceFilterContainer.style.display = 'none';
   const welcomeImage = document.getElementById('welcome-image');
-  if (welcomeImage) {
-    welcomeImage.style.display = 'block';
-  }
+  if (welcomeImage) welcomeImage.style.display = 'block';
 });
 
 async function fetchNews(category, type) {
   if (type === 'italian') {
     await fetchItalianNews(category);
-  } else if (type === 'international') {
-    const url = `${proxyUrl}/news?language=en&category=${category}`;
-    await fetchNewsFromAPI(url);
+  } else {
+    await fetchNewsFromAPI(`${proxyUrl}/news?language=en&category=${category}`);
   }
 }
 
 async function fetchItalianNews(category) {
-  const gNewsAPIKey = 'c3674db69f99957229145b7656d1b845';
-  let allArticles = [];
-  let page = 1;
-  const pageSize = 100;
-  const maxPages = 10;
-
-  while (page <= maxPages) {
-    const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=it&topic=${category}&token=${gNewsAPIKey}&pageSize=${pageSize}&page=${page}`;
+  const key = 'c3674db69f99957229145b7656d1b845';
+  let all = [];
+  for (let page = 1; page <= 10; page++) {
+    const url = `https://gnews.io/api/v4/top-headlines?lang=it&country=it&topic=${category}&token=${key}&pageSize=100&page=${page}`;
     try {
-      const response = await fetch(gNewsUrl);
-      const data = await response.json();
-
-      if (data.articles && data.articles.length > 0) {
-        const articlesWithCategory = data.articles.map(article => ({
-          ...article,
-          category: category,
-          source: {
-            name: article.source?.name || 'Fonte sconosciuta'
-          }
-        }));
-
-        allArticles = [...allArticles, ...articlesWithCategory];
-        page++;
-      } else {
-        break;
-      }
-    } catch (error) {
-      newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie italiane.</p>';
-      console.error(error);
-      break;
-    }
+      const data = await (await fetch(url)).json();
+      if (!data.articles.length) break;
+      const mapped = data.articles.map(a => ({ ...a, category, source: { name: a.source?.name || 'Fonte sconosciuta' } }));
+      all = all.concat(mapped);
+    } catch { break; }
   }
-
-  const seenUrls = new Set();
-  const uniqueArticles = allArticles.filter(article => {
-    if (!article.url || seenUrls.has(article.url)) return false;
-    seenUrls.add(article.url);
-    return true;
-  });
-
-  currentArticles = uniqueArticles;
-  filteredArticles = currentArticles;
+  currentArticles = Array.from(new Map(all.map(a => [a.url, a])).values());
   updateSourceFilter(currentArticles);
-  currentPage = 1;
-  renderPage(filteredArticles);
-  updatePagination(filteredArticles);
+  renderPage(currentArticles);
+  updatePagination(currentArticles);
 }
 
 async function fetchNewsFromAPI(url) {
   try {
-    const response = await fetch(url);
-    const data = await response.json();
-    const allArticles = (data.articles || []).map(article => ({
-      ...article,
-      category: article.category || 'general',
-      source: {
-        name: article.source?.name || 'Fonte sconosciuta'
-      }
-    }));
-
-    const seenUrls = new Set();
-    const uniqueArticles = allArticles.filter(article => {
-      if (!article.url || seenUrls.has(article.url)) return false;
-      seenUrls.add(article.url);
-      return true;
-    });
-
-    currentArticles = uniqueArticles;
-    filteredArticles = currentArticles;
+    const data = await (await fetch(url)).json();
+    const all = (data.articles || []).map(a => ({ ...a, category: a.category || 'general', source: { name: a.source?.name || 'Fonte sconosciuta' } }));
+    currentArticles = Array.from(new Map(all.map(a => [a.url, a])).values());
     updateSourceFilter(currentArticles);
-    currentPage = 1;
-    renderPage(filteredArticles);
-    updatePagination(filteredArticles);
-  } catch (error) {
-    newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie internazionali.</p>';
-    console.error(error);
-  }
+    renderPage(currentArticles);
+    updatePagination(currentArticles);
+  } catch (err) { console.error(err); newsContainer.innerHTML = '<p>Errore caricamento notizie.</p>'; }
 }
 
-function renderPage(articles) {
+function renderPage(list) {
   newsContainer.innerHTML = '';
-  const start = (currentPage - 1) * articlesPerPage;
-  const end = start + articlesPerPage;
-  const paginatedArticles = articles.slice(start, end);
-
-  if (paginatedArticles.length === 0) {
-    newsContainer.innerHTML = '<p>Nessuna notizia trovata.</p>';
-    return;
-  }
-
-  paginatedArticles.forEach(article => {
-    const newsItem = document.createElement('div');
-    newsItem.className = 'news-item';
-
-    const publishedDate = article.publishedAt
-      ? new Date(article.publishedAt).toLocaleDateString('it-IT')
-      : '';
-    const rawCategory = article.category || 'general';
-    const category = italianCategoryLabels[rawCategory] || 'Generale';
-    const source = article.source ? article.source.name : 'Fonte sconosciuta';
-
-    const imageUrl = article.urlToImage || article.image || '';
-
-    newsItem.innerHTML = `
-      ${imageUrl ? `<img src="${imageUrl}" alt="Immagine articolo" class="news-image">` : ''}
-      <div class="news-category">${category}</div>
-      <div class="news-date">${publishedDate}</div>
-      <h2 title="${article.title}">${article.title}</h2>
-      <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
-      <a href="${article.url}" target="_blank" rel="noopener noreferrer">Leggi di più</a>
-      <div class="news-source">Fonte: ${source}</div>
+  const start = (currentPage-1)*articlesPerPage, end = start+articlesPerPage;
+  const pageArticles = list.slice(start, end);
+  if (!pageArticles.length) return newsContainer.innerHTML = '<p>Nessuna notizia trovata.</p>';
+  pageArticles.forEach(a => {
+    const item = document.createElement('div'); item.className='news-item';
+    const date = a.publishedAt ? new Date(a.publishedAt).toLocaleDateString('it-IT') : '';
+    item.innerHTML = `
+      ${a.urlToImage ? `<img src="${a.urlToImage}" class="news-image">` : ''}
+      <div class="news-category">${italianCategoryLabels[a.category]||'Generale'}</div>
+      <div class="news-date">${date}</div>
+      <h2 title="${a.title}">${a.title}</h2>
+      <p>${a.description||''}</p>
+      <a href="${a.url}" target="_blank">Leggi di più</a>
+      <div class="news-source">Fonte: ${a.source.name}</div>
     `;
-
-    newsContainer.appendChild(newsItem);
+    newsContainer.appendChild(item);
   });
 }
 
-function updatePagination(articles) {
+function updatePagination(list) {
   paginationContainer.innerHTML = '';
-  const totalPages = Math.ceil(articles.length / articlesPerPage);
-
-  if (totalPages <= 1) return;
-
-  for (let i = 1; i <= totalPages; i++) {
-    const btn = document.createElement('button');
-    btn.textContent = i;
-    btn.className = i === currentPage ? 'active' : '';
-    btn.style.margin = '0 3px';
-    btn.style.padding = '5px 10px';
-    btn.style.cursor = 'pointer';
-    btn.addEventListener('click', () => {
-      currentPage = i;
-      renderPage(filteredArticles);
-      updatePagination(filteredArticles);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-    paginationContainer.appendChild(btn);
+  const pages = Math.ceil(list.length/articlesPerPage);
+  if (pages<2) return;
+  for (let i=1;i<=pages;i++) {
+    const b=document.createElement('button'); b.textContent=i;
+    b.className = i===currentPage?'active':'';
+    b.addEventListener('click',()=>{ currentPage=i; renderPage(list); updatePagination(list); });
+    paginationContainer.appendChild(b);
   }
 }
-
-
