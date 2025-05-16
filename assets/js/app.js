@@ -23,7 +23,7 @@ function createSourceFilterContainer() {
   container.style.margin = '10px 20px';
   container.style.fontWeight = 'bold';
   container.style.color = '#0f172a';
-  container.style.display = 'none'; // Nascondi inizialmente
+  container.style.display = 'none';
   container.style.alignItems = 'center';
   container.style.gap = '10px';
   container.innerHTML = `
@@ -56,11 +56,7 @@ function updateSourceFilter(articles) {
   }
   sourceFilterContainer.style.display = 'flex';
   select.innerHTML = '<option value="all">Tutte</option>' + sources.map(s => `<option value="${s}">${s}</option>`).join('');
-  
-  // Aggiungi qui sotto questa riga:
-  select.addEventListener('change', () => filterBySource());
-
-  select.value = 'all'; // Reset filtro a "Tutte"
+  select.value = 'all';
 }
 
 function filterBySource() {
@@ -76,7 +72,6 @@ function filterBySource() {
 const internationalCategories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology'];
 const italianCategories = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology', 'politics'];
 
-// Nascondi la welcome image quando clicchi su un link del menu (escluso il logo)
 document.querySelectorAll('.submenu li').forEach(item => {
   item.addEventListener('click', () => {
     const welcomeImage = document.getElementById('welcome-image');
@@ -88,7 +83,6 @@ document.querySelectorAll('.submenu li').forEach(item => {
   });
 });
 
-// Gestione apertura/chiusura menù a discesa con mouse
 document.querySelectorAll('.dropdown').forEach(dropdown => {
   let timeout;
 
@@ -104,7 +98,6 @@ document.querySelectorAll('.dropdown').forEach(dropdown => {
   });
 });
 
-// Click sul logo: reset contenuti e filtri
 document.getElementById('logo-link').addEventListener('click', (e) => {
   e.preventDefault();
   newsContainer.innerHTML = '';
@@ -112,9 +105,8 @@ document.getElementById('logo-link').addEventListener('click', (e) => {
   if (sourceFilterContainer) {
     const select = document.getElementById('source-select');
     if (select) select.value = 'all';
-    sourceFilterContainer.style.display = 'none'; // Nascondi filtro
+    sourceFilterContainer.style.display = 'none';
   }
-  // Mostra di nuovo la welcome image quando clicchi sul logo
   const welcomeImage = document.getElementById('welcome-image');
   if (welcomeImage) {
     welcomeImage.style.display = 'block';
@@ -144,14 +136,12 @@ async function fetchItalianNews(category) {
       const data = await response.json();
 
       if (data.articles && data.articles.length > 0) {
-        // aggiungiamo categoria a ogni articolo per comodità
         const articlesWithCategory = data.articles.map(article => ({
           ...article,
           category: category
         }));
 
         allArticles = [...allArticles, ...articlesWithCategory];
-        /* allArticles = allArticles.filter(article => article.category === category); */
         page++;
       } else {
         break;
@@ -163,7 +153,8 @@ async function fetchItalianNews(category) {
     }
   }
 
-  currentArticles = allArticles;
+  const uniqueArticles = Array.from(new Map(allArticles.map(a => [a.url, a])).values());
+  currentArticles = uniqueArticles;
   updateSourceFilter(currentArticles);
   currentPage = 1;
   renderPage(currentArticles);
@@ -174,9 +165,9 @@ async function fetchNewsFromAPI(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    currentArticles = data.articles || [];
-    // aggiungiamo categoria generica se manca per evitare undefined
-    currentArticles = currentArticles.map(a => ({ ...a, category: a.category || 'general' }));
+    const allArticles = (data.articles || []).map(a => ({ ...a, category: a.category || 'general' }));
+    const uniqueArticles = Array.from(new Map(allArticles.map(a => [a.url, a])).values());
+    currentArticles = uniqueArticles;
     updateSourceFilter(currentArticles);
     currentPage = 1;
     renderPage(currentArticles);
@@ -209,7 +200,6 @@ function renderPage(articles) {
     const category = italianCategoryLabels[rawCategory] || 'Generale';
     const source = article.source ? article.source.name : 'Fonte sconosciuta';
 
-    // Gestione immagine: alcuni usano urlToImage, altri image
     const imageUrl = article.urlToImage || article.image || '';
 
     newsItem.innerHTML = `
@@ -230,7 +220,7 @@ function updatePagination(articles) {
   paginationContainer.innerHTML = '';
   const totalPages = Math.ceil(articles.length / articlesPerPage);
 
-  if (totalPages <= 1) return; // Nascondi paginazione se 1 o zero pagine
+  if (totalPages <= 1) return;
 
   for (let i = 1; i <= totalPages; i++) {
     const btn = document.createElement('button');
@@ -243,21 +233,8 @@ function updatePagination(articles) {
       currentPage = i;
       renderPage(articles);
       updatePagination(articles);
-      // Scrolla in alto dopo cambio pagina (opzionale)
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
     paginationContainer.appendChild(btn);
   }
 }
-
-// Click sul logo: reset contenuti e filtri
-document.getElementById('logo-link').addEventListener('click', (e) => {
-  e.preventDefault();
-  newsContainer.innerHTML = '';
-  paginationContainer.innerHTML = '';
-  if (sourceFilterContainer) {
-    const select = document.getElementById('source-select');
-    if (select) select.value = 'all';
-    sourceFilterContainer.style.display = 'none'; // Nascondi filtro
-  }
-});
