@@ -33,6 +33,7 @@ function createSourceFilterContainer() {
     </select>
   `;
   newsContainer.parentNode.insertBefore(container, newsContainer);
+  // Aggiungo qui una sola volta l'event listener per il filtro fonti
   document.getElementById('source-select').addEventListener('change', () => filterBySource());
   return container;
 }
@@ -56,10 +57,7 @@ function updateSourceFilter(articles) {
   }
   sourceFilterContainer.style.display = 'flex';
   select.innerHTML = '<option value="all">Tutte</option>' + sources.map(s => `<option value="${s}">${s}</option>`).join('');
-  
-  // Aggiungi qui sotto questa riga:
-  select.addEventListener('change', () => filterBySource());
-
+  // Non aggiungere qui l'event listener (già aggiunto una volta nella creazione)
   select.value = 'all'; // Reset filtro a "Tutte"
 }
 
@@ -144,14 +142,12 @@ async function fetchItalianNews(category) {
       const data = await response.json();
 
       if (data.articles && data.articles.length > 0) {
-        // aggiungiamo categoria a ogni articolo per comodità
         const articlesWithCategory = data.articles.map(article => ({
           ...article,
           category: category
         }));
 
         allArticles = [...allArticles, ...articlesWithCategory];
-        /* allArticles = allArticles.filter(article => article.category === category); */
         page++;
       } else {
         break;
@@ -175,7 +171,6 @@ async function fetchNewsFromAPI(url) {
     const response = await fetch(url);
     const data = await response.json();
     currentArticles = data.articles || [];
-    // aggiungiamo categoria generica se manca per evitare undefined
     currentArticles = currentArticles.map(a => ({ ...a, category: a.category || 'general' }));
     updateSourceFilter(currentArticles);
     currentPage = 1;
@@ -209,7 +204,6 @@ function renderPage(articles) {
     const category = italianCategoryLabels[rawCategory] || 'Generale';
     const source = article.source ? article.source.name : 'Fonte sconosciuta';
 
-    // Gestione immagine: alcuni usano urlToImage, altri image
     const imageUrl = article.urlToImage || article.image || '';
 
     newsItem.innerHTML = `
@@ -230,34 +224,41 @@ function updatePagination(articles) {
   paginationContainer.innerHTML = '';
   const totalPages = Math.ceil(articles.length / articlesPerPage);
 
-  if (totalPages <= 1) return; // Nascondi paginazione se 1 o zero pagine
+  if (totalPages <= 1) return;
 
   for (let i = 1; i <= totalPages; i++) {
     const btn = document.createElement('button');
     btn.textContent = i;
     btn.className = i === currentPage ? 'active' : '';
-    btn.style.margin = '0 3px';
-    btn.style.padding = '5px 10px';
-    btn.style.cursor = 'pointer';
-    btn.addEventListener('click', () => {
-      currentPage = i;
-      renderPage(articles);
-      updatePagination(articles);
-      // Scrolla in alto dopo cambio pagina (opzionale)
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-    paginationContainer.appendChild(btn);
-  }
+    btn.style.margin = '0
+
+
+
+
+
+
+ChatGPT ha detto:
+3px';
+btn.style.padding = '5px 10px';
+btn.style.cursor = 'pointer';
+btn.addEventListener('click', () => {
+currentPage = i;
+renderPage(articles);
+updatePagination(articles);
+window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+paginationContainer.appendChild(btn);
+}
 }
 
 // Click sul logo: reset contenuti e filtri
 document.getElementById('logo-link').addEventListener('click', (e) => {
-  e.preventDefault();
-  newsContainer.innerHTML = '';
-  paginationContainer.innerHTML = '';
-  if (sourceFilterContainer) {
-    const select = document.getElementById('source-select');
-    if (select) select.value = 'all';
-    sourceFilterContainer.style.display = 'none'; // Nascondi filtro
-  }
+e.preventDefault();
+newsContainer.innerHTML = '';
+paginationContainer.innerHTML = '';
+if (sourceFilterContainer) {
+const select = document.getElementById('source-select');
+if (select) select.value = 'all';
+sourceFilterContainer.style.display = 'none';
+}
 });
