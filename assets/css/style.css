@@ -238,8 +238,8 @@ header {
   margin-right: auto;
   border: 2px solid #0f172a; /* contorno spesso e scuro */
   border-radius: 15px;        /* angoli arrotondati */
-  padding: 1px;              /* spazio interno */
-  box-sizing: border-box;     /* include padding e bordo nella larghezza */
+ /* padding: 1px;              * spazio interno *
+  box-sizing: border-box;    * include padding e bordo nella larghezza *
   background-color: none;  
   display: block;             /* assicurati che si comporti come blocco */
 }
