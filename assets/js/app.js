@@ -31,10 +31,18 @@ function createPaginationContainer() {
 const logoLink = document.getElementById('logo-link');
 const sourceFilterContainer = document.createElement('div');
 sourceFilterContainer.id = 'source-filter-container';
+
+// Modifica: display flex e stile per allineare label e select affiancati
 sourceFilterContainer.style.display = 'none';
+sourceFilterContainer.style.alignItems = 'center';
+sourceFilterContainer.style.gap = '8px';
+sourceFilterContainer.style.margin = '10px 20px';
+sourceFilterContainer.style.fontSize = '0.9em';
+sourceFilterContainer.style.fontWeight = 'bold';
+sourceFilterContainer.style.color = '#0f172a';
 
 sourceFilterContainer.innerHTML = `
-  <label for="source-select">Filtra per fonte:</label>
+  <label for="source-select">Fonti:</label>
   <select id="source-select" style="padding: 5px 10px; border-radius: 5px; border: 1px solid #94a3b8; font-size: 0.9em; min-width: 150px;">
     <option value="all">Tutte</option>
   </select>
