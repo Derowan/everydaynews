@@ -3,9 +3,9 @@ const newsContainer = document.getElementById('news-container');
 const sourceFilterContainer = document.getElementById('source-filter') || createSourceFilterContainer();
 const paginationContainer = document.getElementById('pagination') || createPaginationContainer();
 let currentArticles = [];
-let filteredArticles = [];
 let currentPage = 1;
 const articlesPerPage = 30;
+// Keep filteredArticles state inside filterBySource, no global
 
 const italianCategoryLabels = {
   general: 'Generale',
@@ -50,21 +50,25 @@ function createPaginationContainer() {
 
 function updateSourceFilter(articles) {
   const select = document.getElementById('source-select');
-  const sources = [...new Set(articles.map(a => a.source?.name || 'Fonte sconosciuta'))];
+  const sources = [...new Set(articles.map(a => a.source?.name?.trim() || 'Fonte sconosciuta'))];
   if (sources.length <= 1) {
     sourceFilterContainer.style.display = 'none';
     return;
   }
   sourceFilterContainer.style.display = 'flex';
-  select.innerHTML = '<option value="all">Tutte</option>' + sources.map(s => `<option value="${s}">${s}</option>`).join('');
+  select.innerHTML = '<option value="all">Tutte</option>' + 
+    sources.map(s => `<option value="${encodeURIComponent(s)}">${s}</option>`).join('');
   select.value = 'all';
 }
 
 function filterBySource() {
-  const selectedSource = document.getElementById('source-select').value;
-  filteredArticles = selectedSource === 'all'
+  const select = document.getElementById('source-select');
+  const selectedValue = decodeURIComponent(select.value);
+
+  filteredArticles = selectedValue === 'all'
     ? currentArticles
-    : currentArticles.filter(a => (a.source?.name || 'Fonte sconosciuta') === selectedSource);
+    : currentArticles.filter(a => (a.source?.name?.trim() || 'Fonte sconosciuta') === selectedValue);
+
   currentPage = 1;
   renderPage(filteredArticles);
   updatePagination(filteredArticles);
@@ -263,4 +267,5 @@ function updatePagination(articles) {
     paginationContainer.appendChild(btn);
   }
 }
+
 
