@@ -234,3 +234,61 @@ header {
     font-size: 0.7em;
   }
 }
+
+/* Contenitore filtro fonti sotto il logo */
+#source-filter-container {
+  margin-top: 10px;
+  background-color: #1e293b;
+  padding: 8px 15px;
+  border-radius: 6px;
+  max-width: 400px;
+  color: white;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  user-select: none;
+}
+
+/* Label filtro fonti */
+#source-filter-container label {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+/* Select filtro fonti */
+#source-filter {
+  background-color: #0f172a;
+  border: 1.5px solid #64748b;
+  border-radius: 4px;
+  color: white;
+  padding: 4px 8px;
+  font-size: 0.9em;
+  cursor: pointer;
+  min-width: 180px;
+  transition: border-color 0.3s ease;
+}
+
+#source-filter:hover,
+#source-filter:focus {
+  border-color: #2563eb;
+  outline: none;
+}
+
+/* Nasconde il filtro quando non serve (display: none viene gestito via JS) */
+#source-filter-container.hidden {
+  display: none;
+}
+
+/* Responsive: riduci max-width su schermi piccoli */
+@media (max-width: 600px) {
+  #source-filter-container {
+    max-width: 100%;
+    padding: 6px 10px;
+    font-size: 0.85em;
+  }
+  #source-filter {
+    min-width: 140px;
+  }
+}
