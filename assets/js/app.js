@@ -23,7 +23,7 @@ function createSourceFilterContainer() {
   container.style.margin = '10px 20px';
   container.style.fontWeight = 'bold';
   container.style.color = '#0f172a';
-  container.style.display = 'none'; // Nascondi inizialmente
+  container.style.display = 'none';
   container.style.alignItems = 'center';
   container.style.gap = '10px';
   container.innerHTML = `
@@ -33,7 +33,6 @@ function createSourceFilterContainer() {
     </select>
   `;
   newsContainer.parentNode.insertBefore(container, newsContainer);
-  // Aggiungo qui una sola volta l'event listener per il filtro fonti
   document.getElementById('source-select').addEventListener('change', () => filterBySource());
   return container;
 }
@@ -57,8 +56,7 @@ function updateSourceFilter(articles) {
   }
   sourceFilterContainer.style.display = 'flex';
   select.innerHTML = '<option value="all">Tutte</option>' + sources.map(s => `<option value="${s}">${s}</option>`).join('');
-  // Non aggiungere qui l'event listener (già aggiunto una volta nella creazione)
-  select.value = 'all'; // Reset filtro a "Tutte"
+  select.value = 'all';
 }
 
 function filterBySource() {
@@ -74,7 +72,6 @@ function filterBySource() {
 const internationalCategories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology'];
 const italianCategories = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology', 'politics'];
 
-// Nascondi la welcome image quando clicchi su un link del menu (escluso il logo)
 document.querySelectorAll('.submenu li').forEach(item => {
   item.addEventListener('click', () => {
     const welcomeImage = document.getElementById('welcome-image');
@@ -86,7 +83,6 @@ document.querySelectorAll('.submenu li').forEach(item => {
   });
 });
 
-// Gestione apertura/chiusura menù a discesa con mouse
 document.querySelectorAll('.dropdown').forEach(dropdown => {
   let timeout;
 
@@ -102,7 +98,6 @@ document.querySelectorAll('.dropdown').forEach(dropdown => {
   });
 });
 
-// Click sul logo: reset contenuti e filtri
 document.getElementById('logo-link').addEventListener('click', (e) => {
   e.preventDefault();
   newsContainer.innerHTML = '';
@@ -110,9 +105,8 @@ document.getElementById('logo-link').addEventListener('click', (e) => {
   if (sourceFilterContainer) {
     const select = document.getElementById('source-select');
     if (select) select.value = 'all';
-    sourceFilterContainer.style.display = 'none'; // Nascondi filtro
+    sourceFilterContainer.style.display = 'none';
   }
-  // Mostra di nuovo la welcome image quando clicchi sul logo
   const welcomeImage = document.getElementById('welcome-image');
   if (welcomeImage) {
     welcomeImage.style.display = 'block';
@@ -159,7 +153,8 @@ async function fetchItalianNews(category) {
     }
   }
 
-  currentArticles = allArticles;
+  const uniqueArticles = Array.from(new Map(allArticles.map(a => [a.url, a])).values());
+  currentArticles = uniqueArticles;
   updateSourceFilter(currentArticles);
   currentPage = 1;
   renderPage(currentArticles);
@@ -170,8 +165,9 @@ async function fetchNewsFromAPI(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    currentArticles = data.articles || [];
-    currentArticles = currentArticles.map(a => ({ ...a, category: a.category || 'general' }));
+    const allArticles = (data.articles || []).map(a => ({ ...a, category: a.category || 'general' }));
+    const uniqueArticles = Array.from(new Map(allArticles.map(a => [a.url, a])).values());
+    currentArticles = uniqueArticles;
     updateSourceFilter(currentArticles);
     currentPage = 1;
     renderPage(currentArticles);
@@ -230,35 +226,15 @@ function updatePagination(articles) {
     const btn = document.createElement('button');
     btn.textContent = i;
     btn.className = i === currentPage ? 'active' : '';
-    btn.style.margin = '0
-
-
-
-
-
-
-ChatGPT ha detto:
-3px';
-btn.style.padding = '5px 10px';
-btn.style.cursor = 'pointer';
-btn.addEventListener('click', () => {
-currentPage = i;
-renderPage(articles);
-updatePagination(articles);
-window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-paginationContainer.appendChild(btn);
+    btn.style.margin = '0 3px';
+    btn.style.padding = '5px 10px';
+    btn.style.cursor = 'pointer';
+    btn.addEventListener('click', () => {
+      currentPage = i;
+      renderPage(articles);
+      updatePagination(articles);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    paginationContainer.appendChild(btn);
+  }
 }
-}
-
-// Click sul logo: reset contenuti e filtri
-document.getElementById('logo-link').addEventListener('click', (e) => {
-e.preventDefault();
-newsContainer.innerHTML = '';
-paginationContainer.innerHTML = '';
-if (sourceFilterContainer) {
-const select = document.getElementById('source-select');
-if (select) select.value = 'all';
-sourceFilterContainer.style.display = 'none';
-}
-});
