@@ -82,7 +82,6 @@ document.querySelectorAll('.submenu li').forEach(item => {
     const category = item.dataset.category;
     const type = item.dataset.type;
     fetchNews(category, type);
-  }
   });
 });
 
