@@ -16,34 +16,33 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
+  flex-wrap: wrap; /* permette di andare a capo su schermi piccoli */
 }
 
 .logo {
   font-size: 1.5em;
   font-weight: bold;
+  flex: 1 1 auto; /* occupa spazio necessario */
+  min-width: 150px; /* non si riduca troppo */
 }
+
 .logo a {
   color: white;
   text-decoration: none;
   font-weight: bold;
 }
 
-.menu li a {
-  padding: 10px 0;
-  display: inline-block;
-}
-
+/* Menu principale */
 .menu {
   display: flex;
-  gap: 40px; /* spazio tra i due menù */
+  gap: 20px;
   justify-content: center;
-  flex: 1; /* occupa tutto lo spazio disponibile */
+  flex: 2 1 auto;
   list-style: none;
   margin: 0;
   padding: 0;
+  flex-wrap: wrap; /* rende il menu a capo su schermi piccoli */
 }
-
-
 
 .menu li {
   position: relative;
@@ -54,8 +53,11 @@ header {
   text-decoration: none;
   font-weight: bold;
   cursor: pointer;
+  padding: 10px 5px;
+  white-space: nowrap; /* evita che il testo vada a capo */
 }
 
+/* Submenu */
 .submenu {
   display: none;
   position: absolute;
@@ -64,22 +66,23 @@ header {
   list-style: none;
   top: 30px;
   left: 0;
-  min-width: 180px;
+  min-width: 160px;
   border-radius: 5px;
   z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
 .submenu li {
   padding: 8px 10px;
   color: white;
   cursor: pointer;
+  white-space: nowrap;
 }
 
-
-/*
+/* Griglia news */
 .news-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));    
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 10px;
   padding: 10px;
 }
@@ -88,103 +91,43 @@ header {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 10px; 
+  padding: 12px;
   position: relative;
-  height: 250px; 
-  overflow: hidden; 
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.news-category {  
-  font-size: 0.6em;
-  color: #0f172a;
-  font-weight: bold;
-  margin-bottom: 5px; 
-}
-
-.news-item h2 { 
-  margin: 5px 0;
-  font-size: 0.9em;
-  color: #0f172a;
-}
-
-.news-date { 
-  font-size: 0.70em;
-  color: #64748b;
-  margin-bottom: 5px;
-}
-
-.news-item p { 
-  font-size: 0.8em;
-  margin: 3px 0;
-  flex-grow: 1;
-}
-
-.news-item a {
-  text-decoration: none;
-  color: #2563eb;
-  font-weight: bold;
-  font-size: 0.7em;
-  margin-top: 10px;
-}
-
-.news-source {
-  font-size: 0.70em;
-  color: #475569;
-  margin-top: 5px;
-}
-
-*/
-.news-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(262px, 1fr)); /* +5% larghezza minima (250px → 262px) */
-  gap: 10px;
-  padding: 10px;
-}
-
-.news-item {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 12px; /* leggermente più padding */
-  position: relative;
-  height: 262px; /* +5% altezza (250px → 262px) */
+  height: 262px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.news-category {  /* testo della categoria */
+.news-category {
   font-size: 0.6em;
   color: #0f172a;
   font-weight: bold;
   margin-bottom: 5px;
 }
 
-.news-item h2 { /* testo del titolo */
+.news-item h2 {
   margin: 4px 0;
-  font-size: 0.85em; /* leggermente più piccolo per adattarsi */
+  font-size: 0.85em;
   color: #0f172a;
   line-height: 1.1em;
 }
 
-.news-date { /* data della notizia */
-  font-size: 0.70em;
+.news-date {
+  font-size: 0.7em;
   color: #64748b;
   margin-bottom: 5px;
 }
 
-.news-item p { /* testo anteprima della notizia */
-  font-size: 0.75em; /* leggermente più piccolo */
+.news-item p {
+  font-size: 0.75em;
   margin: 2px 0;
-  flex-grow: 0.8; /* meno crescita per non far traboccare */
+  flex-grow: 0.8;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 3; /* limita a 3 righe */
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
 
@@ -197,13 +140,11 @@ header {
 }
 
 .news-source {
-  font-size: 0.70em;
+  font-size: 0.7em;
   color: #475569;
   margin-top: 5px;
 }
 
-
-/* filtro fonti */
 #source-filter {
   margin: 10px 20px;
   font-size: 0.9em;
@@ -212,17 +153,18 @@ header {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
-/* menù a discesa filtro fonti */
 #source-select {
   padding: 5px 10px;
   border-radius: 5px;
   border: 1px solid #94a3b8;
   font-size: 0.9em;
+  min-width: 150px;
 }
 
-.news-image {  /* immagini anteprima articoli*/
+.news-image {
   width: 100%;
   max-height: 150px;
   object-fit: cover;
@@ -231,16 +173,87 @@ header {
 }
 
 #welcome-image {
-  text-align: center; /* mantiene il testo centrato */
-  margin-top: 50px;   /* margine superiore */
-  max-width: 90%;     /* larghezza massima per non uscire dal contenitore */
+  text-align: center;
+  margin-top: 50px;
+  max-width: 90%;
   margin-left: auto;
   margin-right: auto;
-  border-radius: 15px;        /* angoli arrotondati */
-  /*border: 2px solid #0f172a; /* contorno spesso e scuro */
-  /* padding: 1px;              * spazio interno *
-  box-sizing: border-box;    * include padding e bordo nella larghezza *
-  background-color: none;  
-  display: block;             /* assicurati che si comporti come blocco */
+  border-radius: 15px;
+  display: block;
+}
+
+/* === MEDIA QUERIES PER DISPOSITIVI PIÙ PICCOLI === */
+
+/* Tablet in verticale e piccoli desktop */
+@media (max-width: 900px) {
+  .navbar {
+    justify-content: center;
+  }
+  .menu {
+    gap: 10px;
+    justify-content: center;
+  }
+  .news-container {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}
+
+/* Tablet in orizzontale e smartphone grandi */
+@media (max-width: 600px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+  }
+  .logo {
+    margin-bottom: 10px;
+  }
+  .menu {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  .menu li {
+    width: 100%;
+  }
+  .menu a {
+    padding: 10px;
+    width: 100%;
+    display: block;
+  }
+  .submenu {
+    position: relative;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .news-container {
+    grid-template-columns: 1fr;
+    padding: 10px 5px;
+  }
+  .news-item {
+    height: auto;
+  }
+}
+
+/* Smartphone piccoli */
+@media (max-width: 400px) {
+  header {
+    padding: 8px 10px;
+  }
+  .logo {
+    font-size: 1.2em;
+  }
+  .news-item h2 {
+    font-size: 0.8em;
+  }
+  .news-item p {
+    font-size: 0.7em;
+  }
+  #source-select {
+    min-width: 100%;
+  }
 }
 
