@@ -122,7 +122,8 @@ async function fetchNews(category, type) {
   if (type === 'italian') {
     await fetchItalianNews(category);
   } else if (type === 'international') {
-    const url = `${proxyUrl}/news?language=en&category=${category}`;
+    const today = new Date().toISOString().split('T')[0]; // '2025-05-16' per esempio
+    const url = `${proxyUrl}/news?language=en&category=${category}&from=${today}`;
     await fetchNewsFromAPI(url);
   }
 }
