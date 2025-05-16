@@ -82,6 +82,49 @@ document.querySelectorAll('.submenu li').forEach(item => {
   });
 });
 
+// Nascondi la welcome image quando clicchi su un link del menu (escluso il logo)
+document.querySelectorAll('.menu a:not(#logo-link)').forEach(link => {
+  link.addEventListener('click', () => {
+    const welcomeImage = document.getElementById('welcome-image');
+    if (welcomeImage) {
+      welcomeImage.style.display = 'none';
+    }
+  });
+});
+
+// Gestione apertura/chiusura menù a discesa con mouse
+document.querySelectorAll('.dropdown').forEach(dropdown => {
+  let timeout;
+
+  dropdown.addEventListener('mouseenter', () => {
+    clearTimeout(timeout);
+    dropdown.querySelector('.submenu').style.display = 'block';
+  });
+
+  dropdown.addEventListener('mouseleave', () => {
+    timeout = setTimeout(() => {
+      dropdown.querySelector('.submenu').style.display = 'none';
+    }, 500);
+  });
+});
+
+// Click sul logo: reset contenuti e filtri
+document.getElementById('logo-link').addEventListener('click', (e) => {
+  e.preventDefault();
+  newsContainer.innerHTML = '';
+  paginationContainer.innerHTML = '';
+  if (sourceFilterContainer) {
+    const select = document.getElementById('source-select');
+    if (select) select.value = 'all';
+    sourceFilterContainer.style.display = 'none'; // Nascondi filtro
+  }
+  // Mostra di nuovo la welcome image quando clicchi sul logo
+  const welcomeImage = document.getElementById('welcome-image');
+  if (welcomeImage) {
+    welcomeImage.style.display = 'block';
+  }
+});
+
 async function fetchNews(category, type) {
   if (type === 'italian') {
     await fetchItalianNews(category);
