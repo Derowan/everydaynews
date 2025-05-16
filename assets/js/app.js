@@ -42,8 +42,8 @@ sourceFilterContainer.style.fontWeight = 'bold';
 sourceFilterContainer.style.color = '#0f172a';
 
 sourceFilterContainer.innerHTML = `
-  <label for="source-select">Fonti:</label>
-  <select id="source-select" style="color: white; padding: 5px 10px; border-radius: 5px; border: 1px solid #94a3b8; font-size: 0.9em; min-width: 150px; ">
+   <label for="source-select" style="color: white;">Fonti:</label>
+  <select id="source-select" style="padding: 5px 10px; border-radius: 5px; border: 1px solid #94a3b8; font-size: 0.9em; min-width: 150px; ">
     <option value="all">Tutte</option>
   </select>
 `;
