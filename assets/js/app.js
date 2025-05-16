@@ -128,6 +128,20 @@ async function fetchNews(category, type) {
   }
 }
 
+function removeDuplicatesAndSort(articles) {
+  const seenUrls = new Set();
+  const filtered = articles.filter(article => {
+    if (!article.url) return false; // scarta articoli senza url
+    if (seenUrls.has(article.url)) return false;
+    seenUrls.add(article.url);
+    return true;
+  });
+
+  filtered.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+
+  return filtered;
+}
+
 async function fetchItalianNews(category) {
   const gNewsAPIKey = 'c3674db69f99957229145b7656d1b845';
   let allArticles = [];
@@ -136,14 +150,13 @@ async function fetchItalianNews(category) {
   const maxPages = 10;
 
   while (page <= maxPages) {
-    const today = new Date().toISOString().split('T')[0]; // '2025-05-16' ad esempio
+    const today = new Date().toISOString().split('T')[0];
     const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=it&topic=${category}&token=${gNewsAPIKey}&pageSize=${pageSize}&page=${page}&from=${today}`;
     try {
       const response = await fetch(gNewsUrl);
       const data = await response.json();
 
       if (data.articles && data.articles.length > 0) {
-        // aggiungiamo categoria a ogni articolo per comodità
         const articlesWithCategory = data.articles.map(article => ({
           ...article,
           category: category
@@ -162,13 +175,13 @@ async function fetchItalianNews(category) {
     }
   }
 
+  allArticles = removeDuplicatesAndSort(allArticles);
   currentArticles = allArticles;
   updateSourceFilter(currentArticles);
   currentPage = 1;
   renderPage(currentArticles);
   updatePagination(currentArticles);
 }
-
 async function fetchNewsFromAPI(url) {
   try {
     const response = await fetch(url);
