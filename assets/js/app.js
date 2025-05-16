@@ -151,7 +151,7 @@ async function fetchItalianNews(category) {
         }));
 
         allArticles = [...allArticles, ...articlesWithCategory];
-        /* allArticles = allArticles.filter(article => article.category === category); */
+        allArticles = allArticles.filter(article => article.category === category);
         page++;
       } else {
         break;
