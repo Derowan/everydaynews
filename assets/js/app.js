@@ -56,9 +56,6 @@ function updateSourceFilter(articles) {
   }
   sourceFilterContainer.style.display = 'flex';
   select.innerHTML = '<option value="all">Tutte</option>' + sources.map(s => `<option value="${s}">${s}</option>`).join('');
-  
-  // Aggiungi qui sotto questa riga:
-  select.addEventListener('change', () => filterBySource());
 
   select.value = 'all'; // Reset filtro a "Tutte"
 }
