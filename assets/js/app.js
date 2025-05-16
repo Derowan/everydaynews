@@ -174,6 +174,12 @@ async function fetchNewsFromAPI(url) {
     currentArticles = data.articles || [];
     // aggiungiamo categoria generica se manca per evitare undefined
     currentArticles = currentArticles.map(a => ({ ...a, category: a.category || 'general' }));
+    currentArticles = currentArticles.map(a => {
+  if (a.category === 'politics') return a; // se già politics, lascialo
+  // se la categoria non è politics, assicurati di mappare eventuali sinonimi
+  // oppure lascialo così se il proxy è già corretto
+  return a;
+});
     updateSourceFilter(currentArticles);
     currentPage = 1;
     renderPage(currentArticles);
