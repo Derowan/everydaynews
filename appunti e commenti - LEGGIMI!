@@ -1,3 +1,4 @@
 // Grafica è il branch su cui lavoro, main è aggiornato e anche Backup
 // aggiugnere meteo e crypto (e altre api, cerca api gratsi su chatgpt
-//Aggiungere tasto home e menù dropdown (meteo, notizie) da collegare poi con le API
+//Aggiungere menù dropdown (meteo, notizie) da collegare poi con le API
+//devo concentrarmi sui risultati, eliminazione notizie doppie e aggiunta categorie
