@@ -20,7 +20,18 @@ const italianCategoryLabels = {
 function createSourceFilterContainer() {
   const container = document.createElement('div');
   container.id = 'source-filter';
-  container.innerHTML = '<label for="source-select">Filtra per fonte:</label> <select id="source-select"><option value="all">Tutte</option></select>';
+  container.style.margin = '10px 20px';
+  container.style.fontWeight = 'bold';
+  container.style.color = '#0f172a';
+  container.style.display = 'none'; // Nascondi inizialmente
+  container.style.alignItems = 'center';
+  container.style.gap = '10px';
+  container.innerHTML = `
+    <label for="source-select">Filtra per fonte:</label>
+    <select id="source-select" style="padding:5px 10px; border-radius:5px; border:1px solid #94a3b8; font-size:0.9em;">
+      <option value="all">Tutte</option>
+    </select>
+  `;
   newsContainer.parentNode.insertBefore(container, newsContainer);
   document.getElementById('source-select').addEventListener('change', () => filterBySource());
   return container;
@@ -29,6 +40,9 @@ function createSourceFilterContainer() {
 function createPaginationContainer() {
   const container = document.createElement('div');
   container.id = 'pagination';
+  container.style.margin = '10px 20px';
+  container.style.textAlign = 'center';
+  container.style.gap = '5px';
   newsContainer.parentNode.appendChild(container);
   return container;
 }
@@ -36,13 +50,21 @@ function createPaginationContainer() {
 function updateSourceFilter(articles) {
   const select = document.getElementById('source-select');
   const sources = [...new Set(articles.map(a => a.source?.name || 'Fonte sconosciuta'))];
+  if (sources.length <= 1) {
+    // Nascondi filtro se 0 o 1 fonte
+    sourceFilterContainer.style.display = 'none';
+    return;
+  }
+  sourceFilterContainer.style.display = 'flex';
   select.innerHTML = '<option value="all">Tutte</option>' + sources.map(s => `<option value="${s}">${s}</option>`).join('');
   select.value = 'all'; // Reset filtro a "Tutte"
 }
 
 function filterBySource() {
   const selectedSource = document.getElementById('source-select').value;
-  const filteredArticles = selectedSource === 'all' ? currentArticles : currentArticles.filter(a => (a.source?.name || 'Fonte sconosciuta') === selectedSource);
+  const filteredArticles = selectedSource === 'all'
+    ? currentArticles
+    : currentArticles.filter(a => (a.source?.name || 'Fonte sconosciuta') === selectedSource);
   currentPage = 1;
   renderPage(filteredArticles);
   updatePagination(filteredArticles);
@@ -51,20 +73,57 @@ function filterBySource() {
 const internationalCategories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology'];
 const italianCategories = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology', 'politics'];
 
+// Nascondi la welcome image quando clicchi su un link del menu (escluso il logo)
 document.querySelectorAll('.submenu li').forEach(item => {
   item.addEventListener('click', () => {
+    const welcomeImage = document.getElementById('welcome-image');
+    if (welcomeImage) welcomeImage.style.display = 'none';
+
     const category = item.dataset.category;
     const type = item.dataset.type;
     fetchNews(category, type);
   });
 });
 
+// Gestione apertura/chiusura menù a discesa con mouse
+document.querySelectorAll('.dropdown').forEach(dropdown => {
+  let timeout;
+
+  dropdown.addEventListener('mouseenter', () => {
+    clearTimeout(timeout);
+    dropdown.querySelector('.submenu').style.display = 'block';
+  });
+
+  dropdown.addEventListener('mouseleave', () => {
+    timeout = setTimeout(() => {
+      dropdown.querySelector('.submenu').style.display = 'none';
+    }, 500);
+  });
+});
+
+// Click sul logo: reset contenuti e filtri
+document.getElementById('logo-link').addEventListener('click', (e) => {
+  e.preventDefault();
+  newsContainer.innerHTML = '';
+  paginationContainer.innerHTML = '';
+  if (sourceFilterContainer) {
+    const select = document.getElementById('source-select');
+    if (select) select.value = 'all';
+    sourceFilterContainer.style.display = 'none'; // Nascondi filtro
+  }
+  // Mostra di nuovo la welcome image quando clicchi sul logo
+  const welcomeImage = document.getElementById('welcome-image');
+  if (welcomeImage) {
+    welcomeImage.style.display = 'block';
+  }
+});
+
 async function fetchNews(category, type) {
   if (type === 'italian') {
-    fetchItalianNews(category);
+    await fetchItalianNews(category);
   } else if (type === 'international') {
     const url = `${proxyUrl}/news?language=en&category=${category}`;
-    fetchNewsFromAPI(url);
+    await fetchNewsFromAPI(url);
   }
 }
 
@@ -73,16 +132,16 @@ async function fetchItalianNews(category) {
   let allArticles = [];
   let page = 1;
   const pageSize = 100;
-  let maxPages = 10;
+  const maxPages = 10;
 
   while (page <= maxPages) {
     const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=it&topic=${category}&token=${gNewsAPIKey}&pageSize=${pageSize}&page=${page}`;
-
     try {
       const response = await fetch(gNewsUrl);
       const data = await response.json();
 
       if (data.articles && data.articles.length > 0) {
+        // aggiungiamo categoria a ogni articolo per comodità
         const articlesWithCategory = data.articles.map(article => ({
           ...article,
           category: category
@@ -112,6 +171,8 @@ async function fetchNewsFromAPI(url) {
     const response = await fetch(url);
     const data = await response.json();
     currentArticles = data.articles || [];
+    // aggiungiamo categoria generica se manca per evitare undefined
+    currentArticles = currentArticles.map(a => ({ ...a, category: a.category || 'general' }));
     updateSourceFilter(currentArticles);
     currentPage = 1;
     renderPage(currentArticles);
@@ -137,17 +198,23 @@ function renderPage(articles) {
     const newsItem = document.createElement('div');
     newsItem.className = 'news-item';
 
-    const publishedDate = new Date(article.publishedAt).toLocaleDateString('it-IT');
+    const publishedDate = article.publishedAt
+      ? new Date(article.publishedAt).toLocaleDateString('it-IT')
+      : '';
     const rawCategory = article.category || 'general';
     const category = italianCategoryLabels[rawCategory] || 'Generale';
     const source = article.source ? article.source.name : 'Fonte sconosciuta';
 
+    // Gestione immagine: alcuni usano urlToImage, altri image
+    const imageUrl = article.urlToImage || article.image || '';
+
     newsItem.innerHTML = `
+      ${imageUrl ? `<img src="${imageUrl}" alt="Immagine articolo" class="news-image">` : ''}
       <div class="news-category">${category}</div>
       <div class="news-date">${publishedDate}</div>
-      <h2>${article.title}</h2>
+      <h2 title="${article.title}">${article.title}</h2>
       <p>${article.description || 'Nessuna descrizione disponibile.'}</p>
-      <a href="${article.url}" target="_blank">Leggi di più</a>
+      <a href="${article.url}" target="_blank" rel="noopener noreferrer">Leggi di più</a>
       <div class="news-source">Fonte: ${source}</div>
     `;
 
@@ -159,29 +226,34 @@ function updatePagination(articles) {
   paginationContainer.innerHTML = '';
   const totalPages = Math.ceil(articles.length / articlesPerPage);
 
+  if (totalPages <= 1) return; // Nascondi paginazione se 1 o zero pagine
+
   for (let i = 1; i <= totalPages; i++) {
     const btn = document.createElement('button');
     btn.textContent = i;
     btn.className = i === currentPage ? 'active' : '';
+    btn.style.margin = '0 3px';
+    btn.style.padding = '5px 10px';
+    btn.style.cursor = 'pointer';
     btn.addEventListener('click', () => {
       currentPage = i;
       renderPage(articles);
+      updatePagination(articles);
+      // Scrolla in alto dopo cambio pagina (opzionale)
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
     paginationContainer.appendChild(btn);
   }
 }
 
-document.querySelectorAll('.dropdown').forEach(dropdown => {
-  let timeout;
-
-  dropdown.addEventListener('mouseenter', () => {
-    clearTimeout(timeout);
-    dropdown.querySelector('.submenu').style.display = 'block';
-  });
-
-  dropdown.addEventListener('mouseleave', () => {
-    timeout = setTimeout(() => {
-      dropdown.querySelector('.submenu').style.display = 'none';
-    }, 500);
-  });
+// Click sul logo: reset contenuti e filtri
+document.getElementById('logo-link').addEventListener('click', (e) => {
+  e.preventDefault();
+  newsContainer.innerHTML = '';
+  paginationContainer.innerHTML = '';
+  if (sourceFilterContainer) {
+    const select = document.getElementById('source-select');
+    if (select) select.value = 'all';
+    sourceFilterContainer.style.display = 'none'; // Nascondi filtro
+  }
 });
