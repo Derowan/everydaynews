@@ -73,15 +73,6 @@ function filterBySource() {
 const internationalCategories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology'];
 const italianCategories = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology', 'politics'];
 
-// Evento click su categoria
-document.querySelectorAll('.submenu li').forEach(item => {
-  item.addEventListener('click', () => {
-    const category = item.dataset.category;
-    const type = item.dataset.type;
-    fetchNews(category, type);
-  });
-});
-
 // Nascondi la welcome image quando clicchi su un link del menu (escluso il logo)
 document.querySelectorAll('.submenu li').forEach(item => {
   item.addEventListener('click', () => {
