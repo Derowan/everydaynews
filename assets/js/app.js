@@ -1,11 +1,10 @@
 const proxyUrl = 'https://everydaynews.onrender.com';
 const newsContainer = document.getElementById('news-container');
-const sourceFilterContainer = document.getElementById('source-filter') || createSourceFilterContainer();
+// Rimosso sourceFilterContainer e filtro fonti
 const paginationContainer = document.getElementById('pagination') || createPaginationContainer();
 let currentArticles = [];
 let currentPage = 1;
 const articlesPerPage = 30;
-// Keep filteredArticles state inside filterBySource, no global
 
 const italianCategoryLabels = {
   general: 'Generale',
@@ -18,26 +17,6 @@ const italianCategoryLabels = {
   politics: 'Politica'
 };
 
-function createSourceFilterContainer() {
-  const container = document.createElement('div');
-  container.id = 'source-filter';
-  container.style.margin = '10px 20px';
-  container.style.fontWeight = 'bold';
-  container.style.color = '#0f172a';
-  container.style.display = 'none';
-  container.style.alignItems = 'center';
-  container.style.gap = '10px';
-  container.innerHTML = `
-    <label for="source-select">Filtra per fonte:</label>
-    <select id="source-select" style="padding:5px 10px; border-radius:5px; border:1px solid #94a3b8; font-size:0.9em;">
-      <option value="all">Tutte</option>
-    </select>
-  `;
-  newsContainer.parentNode.insertBefore(container, newsContainer);
-  document.getElementById('source-select').addEventListener('change', filterBySource);
-  return container;
-}
-
 function createPaginationContainer() {
   const container = document.createElement('div');
   container.id = 'pagination';
@@ -46,29 +25,6 @@ function createPaginationContainer() {
   container.style.gap = '5px';
   newsContainer.parentNode.appendChild(container);
   return container;
-}
-
-function updateSourceFilter(articles) {
-  const select = document.getElementById('source-select');
-  const sources = [...new Set(articles.map(a => (a.source?.name || 'Fonte sconosciuta').trim()))];
-  if (sources.length <= 1) {
-    sourceFilterContainer.style.display = 'none';
-    return;
-  }
-  sourceFilterContainer.style.display = 'flex';
-  select.innerHTML = '<option value="all">Tutte</option>' + sources
-    .map(s => `<option value="${encodeURIComponent(s)}">${s}</option>`)
-    .join('');
-  select.value = 'all';
-}
-
-function filterBySource() {
-  const encoded = document.getElementById('source-select').value;
-  const selected = decodeURIComponent(encoded);
-  const list = selected === 'all' ? currentArticles : currentArticles.filter(a => (a.source?.name || 'Fonte sconosciuta').trim() === selected);
-  currentPage = 1;
-  renderPage(list);
-  updatePagination(list);
 }
 
 const internationalCategories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology'];
@@ -94,8 +50,7 @@ document.getElementById('logo-link').addEventListener('click', e => {
   e.preventDefault();
   newsContainer.innerHTML = '';
   paginationContainer.innerHTML = '';
-  document.getElementById('source-select').value = 'all';
-  sourceFilterContainer.style.display = 'none';
+  // Rimosso reset filtro fonti
   const welcomeImage = document.getElementById('welcome-image');
   if (welcomeImage) welcomeImage.style.display = 'block';
 });
@@ -121,7 +76,6 @@ async function fetchItalianNews(category) {
     } catch { break; }
   }
   currentArticles = Array.from(new Map(all.map(a => [a.url, a])).values());
-  updateSourceFilter(currentArticles);
   renderPage(currentArticles);
   updatePagination(currentArticles);
 }
@@ -131,7 +85,6 @@ async function fetchNewsFromAPI(url) {
     const data = await (await fetch(url)).json();
     const all = (data.articles || []).map(a => ({ ...a, category: a.category || 'general', source: { name: a.source?.name || 'Fonte sconosciuta' } }));
     currentArticles = Array.from(new Map(all.map(a => [a.url, a])).values());
-    updateSourceFilter(currentArticles);
     renderPage(currentArticles);
     updatePagination(currentArticles);
   } catch (err) { console.error(err); newsContainer.innerHTML = '<p>Errore caricamento notizie.</p>'; }
