@@ -1,7 +1,7 @@
 const proxyUrl = 'https://everydaynews.onrender.com';
 const newsContainer = document.getElementById('news-container');
-// Rimosso sourceFilterContainer e filtro fonti
 const paginationContainer = document.getElementById('pagination') || createPaginationContainer();
+
 let currentArticles = [];
 let currentPage = 1;
 const articlesPerPage = 30;
@@ -27,30 +27,102 @@ function createPaginationContainer() {
   return container;
 }
 
+// --- NUOVO: Creo e inserisco il filtro fonti dinamico sotto il logo ---
+const logoLink = document.getElementById('logo-link');
+const sourceFilterContainer = document.createElement('div');
+sourceFilterContainer.id = 'source-filter-container';
+sourceFilterContainer.style.display = 'none';
+sourceFilterContainer.style.margin = '10px 20px';
+sourceFilterContainer.style.fontSize = '0.9em';
+sourceFilterContainer.style.fontWeight = 'bold';
+sourceFilterContainer.style.color = '#0f172a';
+sourceFilterContainer.style.display = 'flex';
+sourceFilterContainer.style.alignItems = 'center';
+sourceFilterContainer.style.gap = '10px';
+
+sourceFilterContainer.innerHTML = `
+  <label for="source-select">Filtra per fonte:</label>
+  <select id="source-select" style="padding: 5px 10px; border-radius: 5px; border: 1px solid #94a3b8; font-size: 0.9em; min-width: 150px;">
+    <option value="all">Tutte</option>
+  </select>
+`;
+
+// Inserisco subito sotto il logo (logoLink è <a>, quindi inserisco dopo il suo genitore)
+logoLink.parentNode.insertAdjacentElement('afterend', sourceFilterContainer);
+
+const sourceSelect = document.getElementById('source-select');
+
 const internationalCategories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology'];
 const italianCategories = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology', 'politics'];
 
+// Funzione per ottenere fonti uniche dagli articoli correnti
+function getUniqueSources(articles) {
+  const sourcesSet = new Set();
+  articles.forEach(article => {
+    if (article.source && article.source.name) {
+      sourcesSet.add(article.source.name);
+    }
+  });
+  return Array.from(sourcesSet).sort();
+}
+
+// Popolo il filtro fonti in base agli articoli caricati
+function populateSourceFilter(articles) {
+  const sources = getUniqueSources(articles);
+  sourceSelect.innerHTML = '<option value="all">Tutte</option>';
+  sources.forEach(src => {
+    const option = document.createElement('option');
+    option.value = src;
+    option.textContent = src;
+    sourceSelect.appendChild(option);
+  });
+}
+
+// Mostro o nascondo filtro fonti
+function toggleSourceFilter(show) {
+  sourceFilterContainer.style.display = show ? 'flex' : 'none';
+}
+
+// Evento cambio filtro: filtro articoli per fonte selezionata
+sourceSelect.addEventListener('change', () => {
+  const selectedSource = sourceSelect.value;
+  if (selectedSource === 'all') {
+    renderPage(currentArticles);
+  } else {
+    const filtered = currentArticles.filter(a => a.source?.name === selectedSource);
+    renderPage(filtered);
+  }
+});
+
+// Gestione click sulle voci di sottomenu (categorie)
 document.querySelectorAll('.submenu li').forEach(item => {
   item.addEventListener('click', () => {
     const welcomeImage = document.getElementById('welcome-image');
     if (welcomeImage) welcomeImage.style.display = 'none';
+    currentPage = 1;
     fetchNews(item.dataset.category, item.dataset.type);
+    toggleSourceFilter(true); // mostro filtro quando apro voce menù
   });
 });
 
+// Dropdown menu show/hide
 document.querySelectorAll('.dropdown').forEach(dropdown => {
   let timeout;
-  dropdown.addEventListener('mouseenter', () => { clearTimeout(timeout); dropdown.querySelector('.submenu').style.display = 'block'; });
+  dropdown.addEventListener('mouseenter', () => {
+    clearTimeout(timeout);
+    dropdown.querySelector('.submenu').style.display = 'block';
+  });
   dropdown.addEventListener('mouseleave', () => {
     timeout = setTimeout(() => dropdown.querySelector('.submenu').style.display = 'none', 500);
   });
 });
 
-document.getElementById('logo-link').addEventListener('click', e => {
+// Click sul logo: reset pagina, nascondo filtro
+logoLink.addEventListener('click', e => {
   e.preventDefault();
   newsContainer.innerHTML = '';
   paginationContainer.innerHTML = '';
-  // Rimosso reset filtro fonti
+  toggleSourceFilter(false);
   const welcomeImage = document.getElementById('welcome-image');
   if (welcomeImage) welcomeImage.style.display = 'block';
 });
@@ -73,9 +145,13 @@ async function fetchItalianNews(category) {
       if (!data.articles.length) break;
       const mapped = data.articles.map(a => ({ ...a, category, source: { name: a.source?.name || 'Fonte sconosciuta' } }));
       all = all.concat(mapped);
-    } catch { break; }
+    } catch {
+      break;
+    }
   }
   currentArticles = Array.from(new Map(all.map(a => [a.url, a])).values());
+  currentPage = 1;
+  populateSourceFilter(currentArticles);
   renderPage(currentArticles);
   updatePagination(currentArticles);
 }
@@ -85,25 +161,35 @@ async function fetchNewsFromAPI(url) {
     const data = await (await fetch(url)).json();
     const all = (data.articles || []).map(a => ({ ...a, category: a.category || 'general', source: { name: a.source?.name || 'Fonte sconosciuta' } }));
     currentArticles = Array.from(new Map(all.map(a => [a.url, a])).values());
+    currentPage = 1;
+    populateSourceFilter(currentArticles);
     renderPage(currentArticles);
     updatePagination(currentArticles);
-  } catch (err) { console.error(err); newsContainer.innerHTML = '<p>Errore caricamento notizie.</p>'; }
+  } catch (err) {
+    console.error(err);
+    newsContainer.innerHTML = '<p>Errore caricamento notizie.</p>';
+  }
 }
 
 function renderPage(list) {
   newsContainer.innerHTML = '';
-  const start = (currentPage-1)*articlesPerPage, end = start+articlesPerPage;
+  const start = (currentPage - 1) * articlesPerPage;
+  const end = start + articlesPerPage;
   const pageArticles = list.slice(start, end);
-  if (!pageArticles.length) return newsContainer.innerHTML = '<p>Nessuna notizia trovata.</p>';
+  if (!pageArticles.length) {
+    newsContainer.innerHTML = '<p>Nessuna notizia trovata.</p>';
+    return;
+  }
   pageArticles.forEach(a => {
-    const item = document.createElement('div'); item.className='news-item';
+    const item = document.createElement('div');
+    item.className = 'news-item';
     const date = a.publishedAt ? new Date(a.publishedAt).toLocaleDateString('it-IT') : '';
     item.innerHTML = `
       ${a.urlToImage ? `<img src="${a.urlToImage}" class="news-image">` : ''}
-      <div class="news-category">${italianCategoryLabels[a.category]||'Generale'}</div>
+      <div class="news-category">${italianCategoryLabels[a.category] || 'Generale'}</div>
       <div class="news-date">${date}</div>
       <h2 title="${a.title}">${a.title}</h2>
-      <p>${a.description||''}</p>
+      <p>${a.description || ''}</p>
       <a href="${a.url}" target="_blank">Leggi di più</a>
       <div class="news-source">Fonte: ${a.source.name}</div>
     `;
@@ -113,12 +199,18 @@ function renderPage(list) {
 
 function updatePagination(list) {
   paginationContainer.innerHTML = '';
-  const pages = Math.ceil(list.length/articlesPerPage);
-  if (pages<2) return;
-  for (let i=1;i<=pages;i++) {
-    const b=document.createElement('button'); b.textContent=i;
-    b.className = i===currentPage?'active':'';
-    b.addEventListener('click',()=>{ currentPage=i; renderPage(list); updatePagination(list); });
+  const pages = Math.ceil(list.length / articlesPerPage);
+  if (pages < 2) return;
+  for (let i = 1; i <= pages; i++) {
+    const b = document.createElement('button');
+    b.textContent = i;
+    b.className = i === currentPage ? 'active' : '';
+    b.addEventListener('click', () => {
+      currentPage = i;
+      renderPage(list);
+      updatePagination(list);
+    });
     paginationContainer.appendChild(b);
   }
 }
+
