@@ -51,12 +51,15 @@ function updateSourceFilter(articles) {
   const select = document.getElementById('source-select');
   const sources = [...new Set(articles.map(a => a.source?.name || 'Fonte sconosciuta'))];
   if (sources.length <= 1) {
-    // Nascondi filtro se 0 o 1 fonte
     sourceFilterContainer.style.display = 'none';
     return;
   }
   sourceFilterContainer.style.display = 'flex';
   select.innerHTML = '<option value="all">Tutte</option>' + sources.map(s => `<option value="${s}">${s}</option>`).join('');
+  
+  // Aggiungi qui sotto questa riga:
+  select.addEventListener('change', () => filterBySource());
+
   select.value = 'all'; // Reset filtro a "Tutte"
 }
 
