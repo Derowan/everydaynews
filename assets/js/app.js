@@ -32,13 +32,6 @@ const logoLink = document.getElementById('logo-link');
 const sourceFilterContainer = document.createElement('div');
 sourceFilterContainer.id = 'source-filter-container';
 sourceFilterContainer.style.display = 'none';
-sourceFilterContainer.style.margin = '10px 20px';
-sourceFilterContainer.style.fontSize = '0.9em';
-sourceFilterContainer.style.fontWeight = 'bold';
-sourceFilterContainer.style.color = '#0f172a';
-sourceFilterContainer.style.display = 'flex';
-sourceFilterContainer.style.alignItems = 'center';
-sourceFilterContainer.style.gap = '10px';
 
 sourceFilterContainer.innerHTML = `
   <label for="source-select">Filtra per fonte:</label>
@@ -143,7 +136,12 @@ async function fetchItalianNews(category) {
     try {
       const data = await (await fetch(url)).json();
       if (!data.articles.length) break;
-      const mapped = data.articles.map(a => ({ ...a, category, source: { name: a.source?.name || 'Fonte sconosciuta' } }));
+      const mapped = data.articles.map(a => ({
+        ...a,
+        category,
+        source: { name: a.source?.name || 'Fonte sconosciuta' },
+        image: a.image || ''  // campo corretto per immagine GNews
+      }));
       all = all.concat(mapped);
     } catch {
       break;
@@ -159,7 +157,11 @@ async function fetchItalianNews(category) {
 async function fetchNewsFromAPI(url) {
   try {
     const data = await (await fetch(url)).json();
-    const all = (data.articles || []).map(a => ({ ...a, category: a.category || 'general', source: { name: a.source?.name || 'Fonte sconosciuta' } }));
+    const all = (data.articles || []).map(a => ({
+      ...a,
+      category: a.category || 'general',
+      source: { name: a.source?.name || 'Fonte sconosciuta' }
+    }));
     currentArticles = Array.from(new Map(all.map(a => [a.url, a])).values());
     currentPage = 1;
     populateSourceFilter(currentArticles);
@@ -184,13 +186,15 @@ function renderPage(list) {
     const item = document.createElement('div');
     item.className = 'news-item';
     const date = a.publishedAt ? new Date(a.publishedAt).toLocaleDateString('it-IT') : '';
+    // qui uso a.image per italiane, a.urlToImage per internazionali
+    const imgSrc = a.image || a.urlToImage || '';
     item.innerHTML = `
-      ${a.urlToImage ? `<img src="${a.urlToImage}" class="news-image">` : ''}
+      ${imgSrc ? `<img src="${imgSrc}" class="news-image">` : ''}
       <div class="news-category">${italianCategoryLabels[a.category] || 'Generale'}</div>
       <div class="news-date">${date}</div>
       <h2 title="${a.title}">${a.title}</h2>
       <p>${a.description || ''}</p>
-      <a href="${a.url}" target="_blank">Leggi di più</a>
+      <a href="${a.url}" target="_blank" rel="noopener noreferrer">Leggi di più</a>
       <div class="news-source">Fonte: ${a.source.name}</div>
     `;
     newsContainer.appendChild(item);
@@ -213,4 +217,3 @@ function updatePagination(list) {
     paginationContainer.appendChild(b);
   }
 }
-
