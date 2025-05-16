@@ -135,7 +135,8 @@ async function fetchItalianNews(category) {
   const maxPages = 10;
 
   while (page <= maxPages) {
-    const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=it&topic=${category}&token=${gNewsAPIKey}&pageSize=${pageSize}&page=${page}`;
+    const today = new Date().toISOString().split('T')[0]; // '2025-05-16' ad esempio
+    const gNewsUrl = `https://gnews.io/api/v4/top-headlines?lang=it&country=it&topic=${category}&token=${gNewsAPIKey}&pageSize=${pageSize}&page=${page}&from=${today}`;
     try {
       const response = await fetch(gNewsUrl);
       const data = await response.json();
