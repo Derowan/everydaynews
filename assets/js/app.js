@@ -3,6 +3,7 @@ const newsContainer = document.getElementById('news-container');
 const sourceFilterContainer = document.getElementById('source-filter') || createSourceFilterContainer();
 const paginationContainer = document.getElementById('pagination') || createPaginationContainer();
 let currentArticles = [];
+let filteredArticles = [];
 let currentPage = 1;
 const articlesPerPage = 30;
 
@@ -61,7 +62,7 @@ function updateSourceFilter(articles) {
 
 function filterBySource() {
   const selectedSource = document.getElementById('source-select').value;
-  const filteredArticles = selectedSource === 'all'
+  filteredArticles = selectedSource === 'all'
     ? currentArticles
     : currentArticles.filter(a => (a.source?.name || 'Fonte sconosciuta') === selectedSource);
   currentPage = 1;
@@ -164,10 +165,11 @@ async function fetchItalianNews(category) {
   });
 
   currentArticles = uniqueArticles;
+  filteredArticles = currentArticles;
   updateSourceFilter(currentArticles);
   currentPage = 1;
-  renderPage(currentArticles);
-  updatePagination(currentArticles);
+  renderPage(filteredArticles);
+  updatePagination(filteredArticles);
 }
 
 async function fetchNewsFromAPI(url) {
@@ -190,10 +192,11 @@ async function fetchNewsFromAPI(url) {
     });
 
     currentArticles = uniqueArticles;
+    filteredArticles = currentArticles;
     updateSourceFilter(currentArticles);
     currentPage = 1;
-    renderPage(currentArticles);
-    updatePagination(currentArticles);
+    renderPage(filteredArticles);
+    updatePagination(filteredArticles);
   } catch (error) {
     newsContainer.innerHTML = '<p>Errore durante il caricamento delle notizie internazionali.</p>';
     console.error(error);
@@ -253,8 +256,8 @@ function updatePagination(articles) {
     btn.style.cursor = 'pointer';
     btn.addEventListener('click', () => {
       currentPage = i;
-      renderPage(articles);
-      updatePagination(articles);
+      renderPage(filteredArticles);
+      updatePagination(filteredArticles);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
     paginationContainer.appendChild(btn);
