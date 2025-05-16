@@ -229,3 +229,17 @@ header {
   border-radius: 5px;
   margin-bottom: 10px;
 }
+
+#welcome-image {
+  text-align: center; /* mantiene il testo centrato */
+  margin-top: 50px;   /* margine superiore */
+  max-width: 90%;     /* larghezza massima per non uscire dal contenitore */
+  margin-left: auto;
+  margin-right: auto;
+  border: 4px solid #0f172a; /* contorno spesso e scuro */
+  border-radius: 15px;        /* angoli arrotondati */
+  padding: 15px;              /* spazio interno */
+  box-sizing: border-box;     /* include padding e bordo nella larghezza */
+  background-color: white;    /* sfondo per risaltare il bordo (opzionale) */
+  display: block;             /* assicurati che si comporti come blocco */
+}
