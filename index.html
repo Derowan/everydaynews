@@ -12,7 +12,17 @@
       <div class="logo">
         <a href="#" id="logo-link">EverydayNews</a>
       </div>
-      <!-- FILTRO FONTI verrà inserito dinamicamente subito dopo questo div logo dal JS -->
+
+      <!-- FILTRO FONTI inserito dinamicamente da JS, struttura consigliata: -->
+      <!--
+      <div id="source-filter-container" style="display:flex; align-items:center; gap:8px; margin: 10px 20px; font-size: 0.9em; font-weight: bold; color: #0f172a;">
+        <label for="source-select">Fonti:</label>
+        <select id="source-select" style="padding: 5px 10px; border-radius: 5px; border: 1px solid #94a3b8; font-size: 0.9em; min-width: 150px;">
+          <option value="all">Tutte</option>
+        </select>
+      </div>
+      -->
+
       <ul class="menu">
         <li class="dropdown">
           <a href="#" data-type="italian">Notizie Italiane</a>
@@ -56,3 +66,4 @@
   <script src="assets/js/app.js"></script>
 </body>
 </html>
+
