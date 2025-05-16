@@ -83,12 +83,15 @@ document.querySelectorAll('.submenu li').forEach(item => {
 });
 
 // Nascondi la welcome image quando clicchi su un link del menu (escluso il logo)
-document.querySelectorAll('.menu a:not(#logo-link)').forEach(link => {
-  link.addEventListener('click', () => {
+document.querySelectorAll('.submenu li').forEach(item => {
+  item.addEventListener('click', () => {
     const welcomeImage = document.getElementById('welcome-image');
-    if (welcomeImage) {
-      welcomeImage.style.display = 'none';
-    }
+    if (welcomeImage) welcomeImage.style.display = 'none';
+
+    const category = item.dataset.category;
+    const type = item.dataset.type;
+    fetchNews(category, type);
+  }
   });
 });
 
