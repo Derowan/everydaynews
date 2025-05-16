@@ -246,22 +246,6 @@ function updatePagination(articles) {
   }
 }
 
-// Gestione apertura/chiusura menù a discesa con mouse
-document.querySelectorAll('.dropdown').forEach(dropdown => {
-  let timeout;
-
-  dropdown.addEventListener('mouseenter', () => {
-    clearTimeout(timeout);
-    dropdown.querySelector('.submenu').style.display = 'block';
-  });
-
-  dropdown.addEventListener('mouseleave', () => {
-    timeout = setTimeout(() => {
-      dropdown.querySelector('.submenu').style.display = 'none';
-    }, 500);
-  });
-});
-
 // Click sul logo: reset contenuti e filtri
 document.getElementById('logo-link').addEventListener('click', (e) => {
   e.preventDefault();
