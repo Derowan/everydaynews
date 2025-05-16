@@ -138,7 +138,10 @@ async function fetchItalianNews(category) {
       if (data.articles && data.articles.length > 0) {
         const articlesWithCategory = data.articles.map(article => ({
           ...article,
-          category: category
+          category: category,
+          source: {
+            name: article.source?.name || 'Fonte sconosciuta'
+          }
         }));
 
         allArticles = [...allArticles, ...articlesWithCategory];
@@ -153,7 +156,13 @@ async function fetchItalianNews(category) {
     }
   }
 
-  const uniqueArticles = Array.from(new Map(allArticles.map(a => [a.url, a])).values());
+  const seenUrls = new Set();
+  const uniqueArticles = allArticles.filter(article => {
+    if (!article.url || seenUrls.has(article.url)) return false;
+    seenUrls.add(article.url);
+    return true;
+  });
+
   currentArticles = uniqueArticles;
   updateSourceFilter(currentArticles);
   currentPage = 1;
@@ -165,8 +174,21 @@ async function fetchNewsFromAPI(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    const allArticles = (data.articles || []).map(a => ({ ...a, category: a.category || 'general' }));
-    const uniqueArticles = Array.from(new Map(allArticles.map(a => [a.url, a])).values());
+    const allArticles = (data.articles || []).map(article => ({
+      ...article,
+      category: article.category || 'general',
+      source: {
+        name: article.source?.name || 'Fonte sconosciuta'
+      }
+    }));
+
+    const seenUrls = new Set();
+    const uniqueArticles = allArticles.filter(article => {
+      if (!article.url || seenUrls.has(article.url)) return false;
+      seenUrls.add(article.url);
+      return true;
+    });
+
     currentArticles = uniqueArticles;
     updateSourceFilter(currentArticles);
     currentPage = 1;
