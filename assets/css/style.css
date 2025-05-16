@@ -22,6 +22,16 @@ header {
   font-size: 1.5em;
   font-weight: bold;
 }
+.logo a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.menu li a {
+  padding: 10px 0;
+  display: inline-block;
+}
 
 .menu {
   display: flex;
@@ -66,10 +76,10 @@ header {
 }
 
 
-
+/*
 .news-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Ridotto da 300px a 250px per aumentare la larghezza */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));    
   gap: 10px;
   padding: 10px;
 }
@@ -78,35 +88,35 @@ header {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 10px; /* Ridotto padding per altezza minore */
+  padding: 10px; 
   position: relative;
-  height: 250px; /* Altezza fissa più contenuta */
-  overflow: hidden; /* Evita che il contenuto esca */
+  height: 250px; 
+  overflow: hidden; 
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.news-category {  /*testo della categoria*/
+.news-category {  
   font-size: 0.6em;
   color: #0f172a;
   font-weight: bold;
-  margin-bottom: 5px; /* Ridotto il margine */
+  margin-bottom: 5px; 
 }
 
-.news-item h2 { /* testo del titolo*/
+.news-item h2 { 
   margin: 5px 0;
   font-size: 0.9em;
   color: #0f172a;
 }
 
-.news-date { /* data della notizia */
+.news-date { 
   font-size: 0.70em;
   color: #64748b;
   margin-bottom: 5px;
 }
 
-.news-item p { /* testo anteprima della notizia */
+.news-item p { 
   font-size: 0.8em;
   margin: 3px 0;
   flex-grow: 1;
@@ -124,5 +134,113 @@ header {
   font-size: 0.70em;
   color: #475569;
   margin-top: 5px;
+}
+
+*/
+.news-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(262px, 1fr)); /* +5% larghezza minima (250px → 262px) */
+  gap: 10px;
+  padding: 10px;
+}
+
+.news-item {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 12px; /* leggermente più padding */
+  position: relative;
+  height: 262px; /* +5% altezza (250px → 262px) */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.news-category {  /* testo della categoria */
+  font-size: 0.6em;
+  color: #0f172a;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.news-item h2 { /* testo del titolo */
+  margin: 4px 0;
+  font-size: 0.85em; /* leggermente più piccolo per adattarsi */
+  color: #0f172a;
+  line-height: 1.1em;
+}
+
+.news-date { /* data della notizia */
+  font-size: 0.70em;
+  color: #64748b;
+  margin-bottom: 5px;
+}
+
+.news-item p { /* testo anteprima della notizia */
+  font-size: 0.75em; /* leggermente più piccolo */
+  margin: 2px 0;
+  flex-grow: 0.8; /* meno crescita per non far traboccare */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* limita a 3 righe */
+  -webkit-box-orient: vertical;
+}
+
+.news-item a {
+  text-decoration: none;
+  color: #2563eb;
+  font-weight: bold;
+  font-size: 0.7em;
+  margin-top: 10px;
+}
+
+.news-source {
+  font-size: 0.70em;
+  color: #475569;
+  margin-top: 5px;
+}
+
+
+/* filtro fonti */
+#source-filter {
+  margin: 10px 20px;
+  font-size: 0.9em;
+  font-weight: bold;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* menù a discesa filtro fonti */
+#source-select {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #94a3b8;
+  font-size: 0.9em;
+}
+
+.news-image {  /* immagini anteprima articoli*/
+  width: 100%;
+  max-height: 150px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+#welcome-image {
+  text-align: center; /* mantiene il testo centrato */
+  margin-top: 50px;   /* margine superiore */
+  max-width: 90%;     /* larghezza massima per non uscire dal contenitore */
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 15px;        /* angoli arrotondati */
+  /*border: 2px solid #0f172a; /* contorno spesso e scuro */
+  /* padding: 1px;              * spazio interno *
+  box-sizing: border-box;    * include padding e bordo nella larghezza *
+  background-color: none;  
+  display: block;             /* assicurati che si comporti come blocco */
 }
 
