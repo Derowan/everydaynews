@@ -260,3 +260,4 @@ function updatePagination(articles) {
     paginationContainer.appendChild(btn);
   }
 }
+
