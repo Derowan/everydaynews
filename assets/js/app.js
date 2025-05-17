@@ -147,7 +147,7 @@ document.getElementById('meteo-link').addEventListener('click', e => {
   const cityInput = document.getElementById('city-input');
   const suggestionsDiv = document.getElementById('suggestions');
 
-  let selectedLocation = null; // per salvare lat e lon scelti
+  let selectedLocation = null;
   let debounceTimeout;
 
   cityInput.addEventListener('input', () => {
@@ -210,12 +210,21 @@ document.getElementById('meteo-link').addEventListener('click', e => {
       }
       resultDiv.innerHTML = `
         <h3>Meteo per ${data.location.name}, ${data.location.country}</h3>
-        ${data.forecast.forecastday.map(day => `
-          <div class="forecast-day">
-            <strong>${day.date}</strong>: ${day.day.condition.text}, ${day.day.avgtemp_c}°C
-            <img src="https:${day.day.condition.icon}" alt="" class="forecast-icon">
-          </div>
-        `).join('')}
+        <div class="forecast-container" style="display:flex; gap:20px; justify-content:center;">
+          ${data.forecast.forecastday.map(day => `
+            <div class="forecast-day" style="flex:1; background:#0f172a; color:white; padding:10px; border-radius:8px; max-height:400px; overflow-y:auto;">
+              <h4 style="text-align:center;">${day.date}</h4>
+              ${day.hour.map(hour => `
+                <div style="display:flex; justify-content:space-between; margin:4px 0; font-size:12px;">
+                  <div>${hour.time.split(' ')[1].slice(0,5)}</div>
+                  <div><img src="https:${hour.condition.icon}" alt="${hour.condition.text}" style="vertical-align: middle; width:20px;"></div>
+                  <div>${hour.temp_c}°C</div>
+                  <div>${hour.condition.text}</div>
+                </div>
+              `).join('')}
+            </div>
+          `).join('')}
+        </div>
       `;
     } catch {
       document.getElementById('weather-result').innerHTML = '<p class="error">Errore nel recupero del meteo.</p>';
