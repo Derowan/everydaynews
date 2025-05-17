@@ -292,3 +292,29 @@ header {
     min-width: 140px;
   }
 }
+
+/* meteo */
+#suggestions {
+  background-color: #0f172a;
+  color: white;
+  max-width: 200px;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  border-top: none;
+  position: relative;
+  z-index: 1000;
+  border-radius: 0 0 5px 5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.suggestion-item {
+  padding: 8px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #1e293b;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.suggestion-item:hover {
+  background-color: #1e293b;
+}
