@@ -134,13 +134,13 @@ document.getElementById('meteo-link').addEventListener('click', e => {
   toggleSourceFilter(false);
   paginationContainer.innerHTML = '';
   newsContainer.innerHTML = `
-    <div id="weather-form" style="margin: 20px; color: white; text-align: center;">
-      <h2 style="color: #0f172a;">Inserisci località</h2>
-      <input id="city-input" type="text" placeholder="Es. Roma" autocomplete="off" style="padding: 10px; width: 200px; border-radius: 5px; border: 1px solid #ccc;">
-      <div id="suggestions" style="background: #0f172a; color: black; max-width: 200px; margin: 0 auto; border: 1px solid #ccc; border-top: none; position: relative; z-index: 1000;"></div>
+    <div id="weather-form" class="weather-form">
+      <h2 class="weather-title">Inserisci località</h2>
+      <input id="city-input" type="text" placeholder="Es. Roma" autocomplete="off" class="city-input">
+      <div id="suggestions" class="suggestions"></div>
       <br>
-      <button id="get-weather" style="padding: 10px 20px; border: none; border-radius: 5px; background-color: #3b82f6; color: white; cursor: pointer;">Conferma</button>
-      <div id="weather-result" style="margin-top: 20px;"></div>
+      <button id="get-weather" class="btn-confirm">Conferma</button>
+      <div id="weather-result" class="weather-result"></div>
     </div>
   `;
 
@@ -164,28 +164,29 @@ document.getElementById('meteo-link').addEventListener('click', e => {
         const res = await fetch(url, { headers: { 'User-Agent': 'EverydayNewsApp/1.0' }});
         const locations = await res.json();
         if (!Array.isArray(locations) || locations.length === 0) {
-          suggestionsDiv.innerHTML = '<div style="padding:5px;">Nessun suggerimento</div>';
+          suggestionsDiv.innerHTML = '<div class="suggestion-item no-results">Nessun suggerimento</div>';
           selectedLocation = null;
           return;
         }
-        suggestionsDiv.innerHTML = locations.map(loc => `
-          <div class="suggestion-item" style="padding: 5px; cursor: pointer; border-bottom: 1px solid #ddd;">
+        suggestionsDiv.innerHTML = locations.map((loc, index) => `
+          <div class="suggestion-item" data-index="${index}">
             ${loc.display_name}
           </div>
         `).join('');
-        document.querySelectorAll('.suggestion-item').forEach((item, index) => {
+        document.querySelectorAll('.suggestion-item').forEach(item => {
           item.addEventListener('click', () => {
-            cityInput.value = locations[index].display_name;
+            const idx = parseInt(item.getAttribute('data-index'));
+            cityInput.value = locations[idx].display_name;
             suggestionsDiv.innerHTML = '';
             selectedLocation = {
-              lat: locations[index].lat,
-              lon: locations[index].lon,
-              name: locations[index].display_name
+              lat: locations[idx].lat,
+              lon: locations[idx].lon,
+              name: locations[idx].display_name
             };
           });
         });
       } catch {
-        suggestionsDiv.innerHTML = '<div style="padding:5px; color:red;">Errore suggerimenti</div>';
+        suggestionsDiv.innerHTML = '<div class="suggestion-item error">Errore suggerimenti</div>';
         selectedLocation = null;
       }
     }, 300);
@@ -204,23 +205,24 @@ document.getElementById('meteo-link').addEventListener('click', e => {
       const data = await res.json();
       const resultDiv = document.getElementById('weather-result');
       if (data.error) {
-        resultDiv.innerHTML = `<p style="color: red;">${data.error.message}</p>`;
+        resultDiv.innerHTML = `<p class="error">${data.error.message}</p>`;
         return;
       }
       resultDiv.innerHTML = `
         <h3>Meteo per ${data.location.name}, ${data.location.country}</h3>
         ${data.forecast.forecastday.map(day => `
-          <div style="margin: 10px 0;">
+          <div class="forecast-day">
             <strong>${day.date}</strong>: ${day.day.condition.text}, ${day.day.avgtemp_c}°C
-            <img src="https:${day.day.condition.icon}" alt="" style="vertical-align: middle;">
+            <img src="https:${day.day.condition.icon}" alt="" class="forecast-icon">
           </div>
         `).join('')}
       `;
     } catch {
-      document.getElementById('weather-result').innerHTML = '<p>Errore nel recupero del meteo.</p>';
+      document.getElementById('weather-result').innerHTML = '<p class="error">Errore nel recupero del meteo.</p>';
     }
   });
 });
+
 
 // fine BLOCCO METEO
 
