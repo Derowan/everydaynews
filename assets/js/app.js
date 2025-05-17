@@ -134,14 +134,14 @@ document.getElementById('meteo-link').addEventListener('click', e => {
   toggleSourceFilter(false);
   paginationContainer.innerHTML = '';
   newsContainer.innerHTML = `
-    <div id="weather-form">
+    <div id="weather-form" style="margin: 20px auto; max-width: 1000px; color: white; text-align: center;">
       <h2>Inserisci località</h2>
-      <input id="city-input" type="text" placeholder="Es. Roma" autocomplete="off">
-      <div id="suggestions"></div>
-      <br>
-      <button id="get-weather">Conferma</button>
-      <div id="weather-result">
-        <div id="weather-columns"></div>
+      <input id="city-input" type="text" placeholder="Es. Roma" style="padding: 10px; width: 200px; border-radius: 5px; border: 1px solid #ccc;" autocomplete="off">
+      <div id="suggestions" style="text-align: left; max-height: 150px; overflow-y: auto;"></div>
+      <br><br>
+      <button id="get-weather" style="padding: 10px 20px; border: none; border-radius: 5px; background-color: #3b82f6; color: white; cursor: pointer;">Conferma</button>
+      <div id="weather-result" style="margin-top: 20px; overflow-x: auto;">
+        <div id="weather-columns" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;"></div>
       </div>
     </div>
   `;
@@ -149,7 +149,7 @@ document.getElementById('meteo-link').addEventListener('click', e => {
   const cityInput = document.getElementById('city-input');
   const suggestions = document.getElementById('suggestions');
 
-  // Funzione per ottenere suggerimenti da Nominatim
+  // Autocomplete località con Nominatim
   cityInput.addEventListener('input', async () => {
     const query = cityInput.value.trim();
     if (query.length < 3) {
@@ -166,25 +166,24 @@ document.getElementById('meteo-link').addEventListener('click', e => {
         return;
       }
       suggestions.innerHTML = data.map(place => `
-        <div class="suggestion-item" data-lat="${place.lat}" data-lon="${place.lon}">
+        <div class="suggestion-item" data-lat="${place.lat}" data-lon="${place.lon}" style="padding: 8px; background: #1e293b; cursor: pointer; border-bottom: 1px solid #334155;">
           ${place.display_name}
         </div>
       `).join('');
       suggestions.style.display = 'block';
 
-      // Click su suggerimento per riempire input e nascondere dropdown
       document.querySelectorAll('.suggestion-item').forEach(item => {
         item.addEventListener('click', () => {
           cityInput.value = item.textContent;
           cityInput.dataset.lat = item.dataset.lat;
           cityInput.dataset.lon = item.dataset.lon;
-          suggestions.style.display = 'none';
           suggestions.innerHTML = '';
+          suggestions.style.display = 'none';
         });
       });
-    } catch {
-      suggestions.style.display = 'none';
+    } catch (err) {
       suggestions.innerHTML = '';
+      suggestions.style.display = 'none';
     }
   });
 
@@ -204,32 +203,29 @@ document.getElementById('meteo-link').addEventListener('click', e => {
       const data = await res.json();
       const container = document.getElementById('weather-columns');
       if (data.error) {
-        container.innerHTML = `<p class="error-message">${data.error.message}</p>`;
+        container.innerHTML = `<p style="color: red;">${data.error.message}</p>`;
         return;
       }
-
-      // Qui la modifica: mappiamo i giorni normalmente ma in container #weather-columns che è flex a righe
       container.innerHTML = data.forecast.forecastday.map(day => `
-        <div class="weather-day">
-          <h3>${day.date}</h3>
-          <div>
+        <div style="background-color: #1e293b; padding: 15px; border-radius: 8px; min-width: 300px; flex: 1 1 300px;">
+          <h3 style="margin-bottom: 10px;">${day.date}</h3>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
             ${day.hour.map(h => `
-              <div class="weather-hour">
+              <div style="display: flex; align-items: center; justify-content: space-between; background-color: #334155; padding: 5px 10px; border-radius: 5px;">
                 <span>${h.time.split(' ')[1]}</span>
                 <span>${h.temp_c}°C</span>
-                <img src="https:${h.condition.icon}" alt="${h.condition.text}">
-                <span>${h.condition.text}</span>
+                <img src="https:${h.condition.icon}" alt="${h.condition.text}" style="height: 24px;">
+                <span style="font-size: 12px;">${h.condition.text}</span>
               </div>
             `).join('')}
           </div>
         </div>
       `).join('');
-    } catch {
-      document.getElementById('weather-columns').innerHTML = '<p class="error-message">Errore nel recupero del meteo.</p>';
+    } catch (err) {
+      document.getElementById('weather-columns').innerHTML = '<p>Errore nel recupero del meteo.</p>';
     }
   });
 });
-
 
 // fine BLOCCO METEO
 
