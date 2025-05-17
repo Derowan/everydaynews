@@ -134,51 +134,101 @@ document.getElementById('meteo-link').addEventListener('click', e => {
   toggleSourceFilter(false);
   paginationContainer.innerHTML = '';
   newsContainer.innerHTML = `
-    <div id="weather-form" style="margin: 20px; color: #1e293b; text-align: center;">
+    <div id="weather-form">
       <h2>Inserisci località</h2>
-      <input id="city-input" type="text" placeholder="Es. Roma" style="padding: 10px; width: 200px; border-radius: 5px; border: 1px solid #ccc;">
-      <br><br>
-      <button id="get-weather" style="padding: 10px 20px; border: none; border-radius: 5px; background-color: #3b82f6; color: white; cursor: pointer;">Conferma</button>
-      <div id="weather-result" style="margin-top: 20px; overflow-x: auto;">
-        <div id="weather-columns" style="display: flex; flex-wrap: nowrap; gap: 20px; justify-content: flex-start;"></div>
+      <input id="city-input" type="text" placeholder="Es. Roma" autocomplete="off">
+      <div id="suggestions"></div>
+      <br>
+      <button id="get-weather">Conferma</button>
+      <div id="weather-result">
+        <div id="weather-columns"></div>
       </div>
     </div>
   `;
 
+  const cityInput = document.getElementById('city-input');
+  const suggestions = document.getElementById('suggestions');
+
+  // Funzione per ottenere suggerimenti da Nominatim
+  cityInput.addEventListener('input', async () => {
+    const query = cityInput.value.trim();
+    if (query.length < 3) {
+      suggestions.style.display = 'none';
+      suggestions.innerHTML = '';
+      return;
+    }
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=5&accept-language=it`);
+      const data = await res.json();
+      if (data.length === 0) {
+        suggestions.style.display = 'none';
+        suggestions.innerHTML = '';
+        return;
+      }
+      suggestions.innerHTML = data.map(place => `
+        <div class="suggestion-item" data-lat="${place.lat}" data-lon="${place.lon}">
+          ${place.display_name}
+        </div>
+      `).join('');
+      suggestions.style.display = 'block';
+
+      // Click su suggerimento per riempire input e nascondere dropdown
+      document.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', () => {
+          cityInput.value = item.textContent;
+          cityInput.dataset.lat = item.dataset.lat;
+          cityInput.dataset.lon = item.dataset.lon;
+          suggestions.style.display = 'none';
+          suggestions.innerHTML = '';
+        });
+      });
+    } catch {
+      suggestions.style.display = 'none';
+      suggestions.innerHTML = '';
+    }
+  });
+
   document.getElementById('get-weather').addEventListener('click', async () => {
-    const city = document.getElementById('city-input').value.trim();
-    if (!city) return;
+    let query = cityInput.value.trim();
+    if (!query) return;
+
+    // Usa coordinate dal dataset se selezionate da suggerimento
+    if (cityInput.dataset.lat && cityInput.dataset.lon) {
+      query = `${cityInput.dataset.lat},${cityInput.dataset.lon}`;
+    }
+
     const apiKey = '176a0ac4a4c14357908172120251705';
-    const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${encodeURIComponent(city)}&days=3&lang=it`;
+    const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${encodeURIComponent(query)}&days=3&lang=it`;
+
     try {
       const res = await fetch(url);
       const data = await res.json();
       const container = document.getElementById('weather-columns');
       if (data.error) {
-        container.innerHTML = `<p style="color: red;">${data.error.message}</p>`;
+        container.innerHTML = `<p class="error-message">${data.error.message}</p>`;
         return;
       }
+
       container.innerHTML = data.forecast.forecastday.map(day => `
-        <div style="background-color: #1e293b; padding: 15px; border-radius: 8px; min-width: 300px;">
-          <h3 style="margin-bottom: 10px;">${day.date}</h3>
-          <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div class="weather-day">
+          <h3>${day.date}</h3>
+          <div>
             ${day.hour.map(h => `
-              <div style="display: flex; align-items: center; justify-content: space-between; background-color: #334155; padding: 5px 10px; border-radius: 5px;">
+              <div class="weather-hour">
                 <span>${h.time.split(' ')[1]}</span>
                 <span>${h.temp_c}°C</span>
-                <img src="https:${h.condition.icon}" alt="" style="height: 24px;">
-                <span style="font-size: 12px;">${h.condition.text}</span>
+                <img src="https:${h.condition.icon}" alt="${h.condition.text}">
+                <span>${h.condition.text}</span>
               </div>
             `).join('')}
           </div>
         </div>
       `).join('');
-    } catch (err) {
-      document.getElementById('weather-columns').innerHTML = '<p>Errore nel recupero del meteo.</p>';
+    } catch {
+      document.getElementById('weather-columns').innerHTML = '<p class="error-message">Errore nel recupero del meteo.</p>';
     }
   });
 });
-
 
 // fine BLOCCO METEO
 
