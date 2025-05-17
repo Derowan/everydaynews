@@ -367,11 +367,14 @@ header {
 .weather-result {
   margin-top: 20px;
   color: white;
-  background-color: #0f172a; /* colore header */
+  background-color: #0f172a; /* stesso colore dell'header */
   padding: 15px;
   border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  font-size: 0.95rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  width: 90%;          /* Occupa il 90% della larghezza del contenitore */
+  max-width: 700px;    /* Non si allarga oltre 700px */
+  margin-left: auto;   /* Centra orizzontalmente */
+  margin-right: auto;
 }
 
 .forecast-day {
