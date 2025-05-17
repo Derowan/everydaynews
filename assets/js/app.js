@@ -129,13 +129,12 @@ logoLink.addEventListener('click', e => {
 });
 
 // --- METEO ---
-// --- METEO ---
 document.getElementById('meteo-link').addEventListener('click', e => {
   e.preventDefault();
   toggleSourceFilter(false);
   paginationContainer.innerHTML = '';
   newsContainer.innerHTML = `
-    <div id="weather-form" style="margin: 20px; color: white; text-align: center;">
+    <div id="weather-form" style="margin: 20px; color: #1e293b; text-align: center;">
       <h2>Inserisci località</h2>
       <input id="city-input" type="text" placeholder="Es. Roma" style="padding: 10px; width: 200px; border-radius: 5px; border: 1px solid #ccc;">
       <br><br>
@@ -160,10 +159,18 @@ document.getElementById('meteo-link').addEventListener('click', e => {
         return;
       }
       container.innerHTML = data.forecast.forecastday.map(day => `
-        <div style="background-color: #1e293b; padding: 15px; border-radius: 8px; width: 250px; min-width: 250px; text-align: center;">
-          <strong>${day.date}</strong><br>
-          ${day.day.condition.text}, ${day.day.avgtemp_c}°C<br>
-          <img src="https:${day.day.condition.icon}" alt="">
+        <div style="background-color: #1e293b; padding: 15px; border-radius: 8px; min-width: 300px;">
+          <h3 style="margin-bottom: 10px;">${day.date}</h3>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            ${day.hour.map(h => `
+              <div style="display: flex; align-items: center; justify-content: space-between; background-color: #334155; padding: 5px 10px; border-radius: 5px;">
+                <span>${h.time.split(' ')[1]}</span>
+                <span>${h.temp_c}°C</span>
+                <img src="https:${h.condition.icon}" alt="" style="height: 24px;">
+                <span style="font-size: 12px;">${h.condition.text}</span>
+              </div>
+            `).join('')}
+          </div>
         </div>
       `).join('');
     } catch (err) {
@@ -171,6 +178,7 @@ document.getElementById('meteo-link').addEventListener('click', e => {
     }
   });
 });
+
 
 // fine BLOCCO METEO
 
