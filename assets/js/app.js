@@ -147,47 +147,58 @@ document.getElementById('meteo-link').addEventListener('click', e => {
   const cityInput = document.getElementById('city-input');
   const suggestionsDiv = document.getElementById('suggestions');
 
+  let selectedLocation = null; // per salvare lat e lon scelti
   let debounceTimeout;
+
   cityInput.addEventListener('input', () => {
     clearTimeout(debounceTimeout);
     const query = cityInput.value.trim();
     if (query.length < 2) {
       suggestionsDiv.innerHTML = '';
+      selectedLocation = null;
       return;
     }
     debounceTimeout = setTimeout(async () => {
-      const apiKey = '176a0ac4a4c14357908172120251705';
-      const url = `https://api.weatherapi.com/v1/search.json?key=${apiKey}&q=${encodeURIComponent(query)}`;
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=5&accept-language=it`;
       try {
-        const res = await fetch(url);
+        const res = await fetch(url, { headers: { 'User-Agent': 'EverydayNewsApp/1.0' }});
         const locations = await res.json();
         if (!Array.isArray(locations) || locations.length === 0) {
           suggestionsDiv.innerHTML = '<div style="padding:5px;">Nessun suggerimento</div>';
+          selectedLocation = null;
           return;
         }
         suggestionsDiv.innerHTML = locations.map(loc => `
           <div class="suggestion-item" style="padding: 5px; cursor: pointer; border-bottom: 1px solid #ddd;">
-            ${loc.name}, ${loc.region ? loc.region + ', ' : ''}${loc.country}
+            ${loc.display_name}
           </div>
         `).join('');
-        document.querySelectorAll('.suggestion-item').forEach(item => {
+        document.querySelectorAll('.suggestion-item').forEach((item, index) => {
           item.addEventListener('click', () => {
-            cityInput.value = item.textContent;
+            cityInput.value = locations[index].display_name;
             suggestionsDiv.innerHTML = '';
+            selectedLocation = {
+              lat: locations[index].lat,
+              lon: locations[index].lon,
+              name: locations[index].display_name
+            };
           });
         });
       } catch {
         suggestionsDiv.innerHTML = '<div style="padding:5px; color:red;">Errore suggerimenti</div>';
+        selectedLocation = null;
       }
     }, 300);
   });
 
   document.getElementById('get-weather').addEventListener('click', async () => {
-    const city = cityInput.value.trim();
-    if (!city) return;
+    if (!selectedLocation) {
+      alert('Seleziona una località dai suggerimenti prima di confermare.');
+      return;
+    }
     suggestionsDiv.innerHTML = '';
     const apiKey = '176a0ac4a4c14357908172120251705';
-    const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${encodeURIComponent(city)}&days=3&lang=it`;
+    const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${selectedLocation.lat},${selectedLocation.lon}&days=3&lang=it`;
     try {
       const res = await fetch(url);
       const data = await res.json();
@@ -210,7 +221,8 @@ document.getElementById('meteo-link').addEventListener('click', e => {
     }
   });
 });
-// fine METEO
+
+// fine BLOCCO METEO
 
 async function fetchNews(category, type) {
   if (type === 'italian') {
