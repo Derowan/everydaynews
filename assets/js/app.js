@@ -127,7 +127,48 @@ logoLink.addEventListener('click', e => {
   const welcomeImage = document.getElementById('welcome-image');
   if (welcomeImage) welcomeImage.style.display = 'block';
 });
+// --- METEO ---
+document.getElementById('meteo-link').addEventListener('click', e => {
+  e.preventDefault();
+  toggleSourceFilter(false);
+  paginationContainer.innerHTML = '';
+  newsContainer.innerHTML = `
+    <div id="weather-form" style="margin: 20px; color: white; text-align: center;">
+      <h2>Inserisci località</h2>
+      <input id="city-input" type="text" placeholder="Es. Roma" style="padding: 10px; width: 200px; border-radius: 5px; border: 1px solid #ccc;">
+      <br><br>
+      <button id="get-weather" style="padding: 10px 20px; border: none; border-radius: 5px; background-color: #3b82f6; color: white; cursor: pointer;">Conferma</button>
+      <div id="weather-result" style="margin-top: 20px;"></div>
+    </div>
+  `;
 
+  document.getElementById('get-weather').addEventListener('click', async () => {
+    const city = document.getElementById('city-input').value.trim();
+    if (!city) return;
+    const apiKey = '176a0ac4a4c14357908172120251705';
+    const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${encodeURIComponent(city)}&days=3&lang=it`;
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      const resultDiv = document.getElementById('weather-result');
+      if (data.error) {
+        resultDiv.innerHTML = `<p style="color: red;">${data.error.message}</p>`;
+        return;
+      }
+      resultDiv.innerHTML = `
+        <h3>Meteo per ${data.location.name}, ${data.location.country}</h3>
+        ${data.forecast.forecastday.map(day => `
+          <div style="margin: 10px 0;">
+            <strong>${day.date}</strong>: ${day.day.condition.text}, ${day.day.avgtemp_c}°C
+            <img src="https:${day.day.condition.icon}" alt="" style="vertical-align: middle;">
+          </div>
+        `).join('')}
+      `;
+    } catch (err) {
+      document.getElementById('weather-result').innerHTML = '<p>Errore nel recupero del meteo.</p>';
+    }
+  });
+});
 async function fetchNews(category, type) {
   if (type === 'italian') {
     await fetchItalianNews(category);
