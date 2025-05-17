@@ -296,7 +296,7 @@ header {
 /* meteo */
 /* Contenitore form meteo */
 #weather-form {
-   width: 100%;
+   width: 700%;
   margin: 30px auto 40px auto;
   padding: 20px;
   background-color: #0f172a; /* stesso colore header */
@@ -309,6 +309,7 @@ header {
 
 /* Titolo del form */
 #weather-form h2 {
+  color: #0f172a;
   margin-bottom: 15px;
   font-weight: bold;
   font-size: 1.5em;
