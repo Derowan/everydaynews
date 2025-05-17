@@ -138,7 +138,8 @@ document.getElementById('meteo-link').addEventListener('click', e => {
       <input id="city-input" type="text" placeholder="Es. Roma" style="padding: 10px; width: 200px; border-radius: 5px; border: 1px solid #ccc;">
       <br><br>
       <button id="get-weather" style="padding: 10px 20px; border: none; border-radius: 5px; background-color: #3b82f6; color: white; cursor: pointer;">Conferma</button>
-      <div id="weather-result" style="margin-top: 20px;"></div>
+      <div id="weather-result" style="margin-top: 20px; background-color: #1e293b; padding: 20px; border-radius: 10px; color: #f8fafc;"></div>
+
     </div>
   `;
 
