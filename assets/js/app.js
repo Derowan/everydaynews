@@ -129,110 +129,48 @@ logoLink.addEventListener('click', e => {
 });
 
 // --- METEO ---
+// --- METEO ---
 document.getElementById('meteo-link').addEventListener('click', e => {
   e.preventDefault();
   toggleSourceFilter(false);
   paginationContainer.innerHTML = '';
   newsContainer.innerHTML = `
-    <div id="weather-form" class="weather-form">
-      <h2 class="weather-title">Inserisci località</h2>
-      <input id="city-input" type="text" placeholder="Es. Roma" autocomplete="off" class="city-input">
-      <div id="suggestions" class="suggestions"></div>
-      <br>
-      <button id="get-weather" class="btn-confirm">Conferma</button>
-      <div id="weather-result" class="weather-result"></div>
+    <div id="weather-form" style="margin: 20px; color: white; text-align: center;">
+      <h2>Inserisci località</h2>
+      <input id="city-input" type="text" placeholder="Es. Roma" style="padding: 10px; width: 200px; border-radius: 5px; border: 1px solid #ccc;">
+      <br><br>
+      <button id="get-weather" style="padding: 10px 20px; border: none; border-radius: 5px; background-color: #3b82f6; color: white; cursor: pointer;">Conferma</button>
+      <div id="weather-result" style="margin-top: 20px; overflow-x: auto;">
+        <div id="weather-columns" style="display: flex; flex-wrap: nowrap; gap: 20px; justify-content: flex-start;"></div>
+      </div>
     </div>
   `;
 
-  const cityInput = document.getElementById('city-input');
-  const suggestionsDiv = document.getElementById('suggestions');
-
-  let selectedLocation = null;
-  let debounceTimeout;
-
-  cityInput.addEventListener('input', () => {
-    clearTimeout(debounceTimeout);
-    const query = cityInput.value.trim();
-    if (query.length < 2) {
-      suggestionsDiv.innerHTML = '';
-      selectedLocation = null;
-      return;
-    }
-    debounceTimeout = setTimeout(async () => {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=5&accept-language=it`;
-      try {
-        const res = await fetch(url, { headers: { 'User-Agent': 'EverydayNewsApp/1.0' }});
-        const locations = await res.json();
-        if (!Array.isArray(locations) || locations.length === 0) {
-          suggestionsDiv.innerHTML = '<div class="suggestion-item no-results">Nessun suggerimento</div>';
-          selectedLocation = null;
-          return;
-        }
-        suggestionsDiv.innerHTML = locations.map((loc, index) => `
-          <div class="suggestion-item" data-index="${index}">
-            ${loc.display_name}
-          </div>
-        `).join('');
-        document.querySelectorAll('.suggestion-item').forEach(item => {
-          item.addEventListener('click', () => {
-            const idx = parseInt(item.getAttribute('data-index'));
-            cityInput.value = locations[idx].display_name;
-            suggestionsDiv.innerHTML = '';
-            selectedLocation = {
-              lat: locations[idx].lat,
-              lon: locations[idx].lon,
-              name: locations[idx].display_name
-            };
-          });
-        });
-      } catch {
-        suggestionsDiv.innerHTML = '<div class="suggestion-item error">Errore suggerimenti</div>';
-        selectedLocation = null;
-      }
-    }, 300);
-  });
-
   document.getElementById('get-weather').addEventListener('click', async () => {
-    if (!selectedLocation) {
-      alert('Seleziona una località dai suggerimenti prima di confermare.');
-      return;
-    }
-    suggestionsDiv.innerHTML = '';
+    const city = document.getElementById('city-input').value.trim();
+    if (!city) return;
     const apiKey = '176a0ac4a4c14357908172120251705';
-    const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${selectedLocation.lat},${selectedLocation.lon}&days=3&lang=it`;
+    const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${encodeURIComponent(city)}&days=3&lang=it`;
     try {
       const res = await fetch(url);
       const data = await res.json();
-      const resultDiv = document.getElementById('weather-result');
+      const container = document.getElementById('weather-columns');
       if (data.error) {
-        resultDiv.innerHTML = `<p class="error">${data.error.message}</p>`;
+        container.innerHTML = `<p style="color: red;">${data.error.message}</p>`;
         return;
       }
-      resultDiv.innerHTML = `
-        <h3>Meteo per ${data.location.name}, ${data.location.country}</h3>
-        <div class="forecast-container" style="display:flex; gap:20px; justify-content:center; flex-wrap: wrap;">
-          ${data.forecast.forecastday.map(day => `
-            <div class="forecast-day" style="flex: 1 1 250px; background:#0f172a; color:white; padding:10px; border-radius:8px; max-height:400px; overflow-y:auto;">
-              <h4 style="text-align:center;">${day.date}</h4>
-              ${day.hour.map(hour => `
-                <div style="display:flex; justify-content:space-between; margin:4px 0; font-size:12px;">
-                  <div>${hour.time.split(' ')[1].slice(0,5)}</div>
-                  <div><img src="https:${hour.condition.icon}" alt="${hour.condition.text}" style="vertical-align: middle; width:20px;"></div>
-                  <div>${hour.temp_c}°C</div>
-                  <div>${hour.condition.text}</div>
-                </div>
-              `).join('')}
-            </div>
-          `).join('')}
+      container.innerHTML = data.forecast.forecastday.map(day => `
+        <div style="background-color: #1e293b; padding: 15px; border-radius: 8px; width: 250px; min-width: 250px; text-align: center;">
+          <strong>${day.date}</strong><br>
+          ${day.day.condition.text}, ${day.day.avgtemp_c}°C<br>
+          <img src="https:${day.day.condition.icon}" alt="">
         </div>
-      `;
-    } catch {
-      document.getElementById('weather-result').innerHTML = '<p class="error">Errore nel recupero del meteo.</p>';
+      `).join('');
+    } catch (err) {
+      document.getElementById('weather-columns').innerHTML = '<p>Errore nel recupero del meteo.</p>';
     }
   });
 });
-
-
 
 // fine BLOCCO METEO
 
