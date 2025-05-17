@@ -293,10 +293,10 @@ header {
   }
 }
 
-/* meteo */
-/* Contenitore form meteo */
+/* METEO */
+
 #weather-form {
-  max-width: 700px;
+  width: 100%;
   margin: 30px auto 40px auto;
   padding: 20px;
   background-color: #0f172a; /* stesso colore header */
