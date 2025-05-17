@@ -210,9 +210,9 @@ document.getElementById('meteo-link').addEventListener('click', e => {
       }
       resultDiv.innerHTML = `
         <h3>Meteo per ${data.location.name}, ${data.location.country}</h3>
-        <div class="forecast-container" style="display:flex; gap:20px; justify-content:center;">
+        <div class="forecast-container" style="display:flex; gap:20px; justify-content:center; flex-wrap: wrap;">
           ${data.forecast.forecastday.map(day => `
-            <div class="forecast-day" style="flex:1; background:#0f172a; color:white; padding:10px; border-radius:8px; max-height:400px; overflow-y:auto;">
+            <div class="forecast-day" style="flex: 1 1 250px; background:#0f172a; color:white; padding:10px; border-radius:8px; max-height:400px; overflow-y:auto;">
               <h4 style="text-align:center;">${day.date}</h4>
               ${day.hour.map(hour => `
                 <div style="display:flex; justify-content:space-between; margin:4px 0; font-size:12px;">
@@ -231,6 +231,7 @@ document.getElementById('meteo-link').addEventListener('click', e => {
     }
   });
 });
+
 
 
 // fine BLOCCO METEO
