@@ -192,7 +192,6 @@ document.getElementById('meteo-link').addEventListener('click', e => {
     let query = cityInput.value.trim();
     if (!query) return;
 
-    // Usa coordinate dal dataset se selezionate da suggerimento
     if (cityInput.dataset.lat && cityInput.dataset.lon) {
       query = `${cityInput.dataset.lat},${cityInput.dataset.lon}`;
     }
@@ -209,6 +208,7 @@ document.getElementById('meteo-link').addEventListener('click', e => {
         return;
       }
 
+      // Qui la modifica: mappiamo i giorni normalmente ma in container #weather-columns che è flex a righe
       container.innerHTML = data.forecast.forecastday.map(day => `
         <div class="weather-day">
           <h3>${day.date}</h3>
@@ -229,6 +229,7 @@ document.getElementById('meteo-link').addEventListener('click', e => {
     }
   });
 });
+
 
 // fine BLOCCO METEO
 
