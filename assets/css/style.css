@@ -312,8 +312,8 @@ header {
 }
 
 .suggestions {
-  background-color: #0f172a;
-  color: white;
+  background-color: white;
+  color: #0f172a;
   max-width: 200px;
   margin: 0 auto;
   border: 1px solid #ccc;
