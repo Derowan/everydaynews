@@ -127,6 +127,7 @@ logoLink.addEventListener('click', e => {
   const welcomeImage = document.getElementById('welcome-image');
   if (welcomeImage) welcomeImage.style.display = 'block';
 });
+
 // --- METEO ---
 document.getElementById('meteo-link').addEventListener('click', e => {
   e.preventDefault();
@@ -134,18 +135,57 @@ document.getElementById('meteo-link').addEventListener('click', e => {
   paginationContainer.innerHTML = '';
   newsContainer.innerHTML = `
     <div id="weather-form" style="margin: 20px; color: white; text-align: center;">
-      <h2 style="color: #0f172a>Inserisci località</h2>
-      <input id="city-input" type="text" placeholder="Es. Roma" style="padding: 10px; width: 200px; border-radius: 5px; border: 1px solid #ccc;">
-      <br><br>
+      <h2 style="color: #0f172a;">Inserisci località</h2>
+      <input id="city-input" type="text" placeholder="Es. Roma" autocomplete="off" style="padding: 10px; width: 200px; border-radius: 5px; border: 1px solid #ccc;">
+      <div id="suggestions" style="background: white; color: black; max-width: 200px; margin: 0 auto; border: 1px solid #ccc; border-top: none; position: relative; z-index: 1000;"></div>
+      <br>
       <button id="get-weather" style="padding: 10px 20px; border: none; border-radius: 5px; background-color: #3b82f6; color: white; cursor: pointer;">Conferma</button>
-      <div id="weather-result" style="margin-top: 20px; background-color: #1e293b; padding: 20px; border-radius: 10px; color: #f8fafc;"></div>
-
+      <div id="weather-result" style="margin-top: 20px;"></div>
     </div>
   `;
 
+  const cityInput = document.getElementById('city-input');
+  const suggestionsDiv = document.getElementById('suggestions');
+
+  let debounceTimeout;
+  cityInput.addEventListener('input', () => {
+    clearTimeout(debounceTimeout);
+    const query = cityInput.value.trim();
+    if (query.length < 2) {
+      suggestionsDiv.innerHTML = '';
+      return;
+    }
+    debounceTimeout = setTimeout(async () => {
+      const apiKey = '176a0ac4a4c14357908172120251705';
+      const url = `https://api.weatherapi.com/v1/search.json?key=${apiKey}&q=${encodeURIComponent(query)}`;
+      try {
+        const res = await fetch(url);
+        const locations = await res.json();
+        if (!Array.isArray(locations) || locations.length === 0) {
+          suggestionsDiv.innerHTML = '<div style="padding:5px;">Nessun suggerimento</div>';
+          return;
+        }
+        suggestionsDiv.innerHTML = locations.map(loc => `
+          <div class="suggestion-item" style="padding: 5px; cursor: pointer; border-bottom: 1px solid #ddd;">
+            ${loc.name}, ${loc.region ? loc.region + ', ' : ''}${loc.country}
+          </div>
+        `).join('');
+        document.querySelectorAll('.suggestion-item').forEach(item => {
+          item.addEventListener('click', () => {
+            cityInput.value = item.textContent;
+            suggestionsDiv.innerHTML = '';
+          });
+        });
+      } catch {
+        suggestionsDiv.innerHTML = '<div style="padding:5px; color:red;">Errore suggerimenti</div>';
+      }
+    }, 300);
+  });
+
   document.getElementById('get-weather').addEventListener('click', async () => {
-    const city = document.getElementById('city-input').value.trim();
+    const city = cityInput.value.trim();
     if (!city) return;
+    suggestionsDiv.innerHTML = '';
     const apiKey = '176a0ac4a4c14357908172120251705';
     const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${encodeURIComponent(city)}&days=3&lang=it`;
     try {
@@ -165,11 +205,13 @@ document.getElementById('meteo-link').addEventListener('click', e => {
           </div>
         `).join('')}
       `;
-    } catch (err) {
+    } catch {
       document.getElementById('weather-result').innerHTML = '<p>Errore nel recupero del meteo.</p>';
     }
   });
 });
+// fine METEO
+
 async function fetchNews(category, type) {
   if (type === 'italian') {
     await fetchItalianNews(category);
