@@ -137,7 +137,7 @@ document.getElementById('meteo-link').addEventListener('click', e => {
     <div id="weather-form" style="margin: 20px; color: white; text-align: center;">
       <h2 style="color: #0f172a;">Inserisci località</h2>
       <input id="city-input" type="text" placeholder="Es. Roma" autocomplete="off" style="padding: 10px; width: 200px; border-radius: 5px; border: 1px solid #ccc;">
-      <div id="suggestions" style="background: white; color: black; max-width: 200px; margin: 0 auto; border: 1px solid #ccc; border-top: none; position: relative; z-index: 1000;"></div>
+      <div id="suggestions" style="background: #0f172a; color: black; max-width: 200px; margin: 0 auto; border: 1px solid #ccc; border-top: none; position: relative; z-index: 1000;"></div>
       <br>
       <button id="get-weather" style="padding: 10px 20px; border: none; border-radius: 5px; background-color: #3b82f6; color: white; cursor: pointer;">Conferma</button>
       <div id="weather-result" style="margin-top: 20px;"></div>
