@@ -298,10 +298,12 @@ header {
   margin: 20px;
   color: white;
   text-align: center;
+  font-family: Arial, sans-serif;
 }
 
 .weather-title {
   color: #0f172a;
+  margin-bottom: 10px;
 }
 
 .city-input {
@@ -309,6 +311,8 @@ header {
   width: 200px;
   border-radius: 5px;
   border: 1px solid #ccc;
+  font-size: 1rem;
+  box-sizing: border-box;
 }
 
 .suggestions {
@@ -321,7 +325,8 @@ header {
   position: relative;
   z-index: 1000;
   border-radius: 0 0 5px 5px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  font-size: 0.9rem;
 }
 
 .suggestion-item {
@@ -333,6 +338,7 @@ header {
 
 .suggestion-item:hover {
   background-color: #1e293b;
+  color: white;
 }
 
 .suggestion-item.no-results,
@@ -340,6 +346,7 @@ header {
   cursor: default;
   color: #ccc;
   border-bottom: none;
+  background-color: transparent;
 }
 
 .btn-confirm {
@@ -349,15 +356,22 @@ header {
   background-color: #3b82f6;
   color: white;
   cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-confirm:hover {
+  background-color: #2563eb;
 }
 
 .weather-result {
   margin-top: 20px;
   color: white;
-  background-color: #0f172a; /* stesso colore dell'header */
+  background-color: #0f172a; /* colore header */
   padding: 15px;
   border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  font-size: 0.95rem;
 }
 
 .forecast-day {
@@ -370,5 +384,6 @@ header {
 }
 
 .error {
-  color: red;
+  color: #ff4d4d;
+  font-weight: bold;
 }
