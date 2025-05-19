@@ -243,12 +243,50 @@ async function fetchNews(category, type) {
 
 async function fetchItalianNews(category) {
   const key = 'c3674db69f99957229145b7656d1b845';
+
+  // Lista fonti italiane accettate da GNews API (senza spazi e minuscolo, verificare con /sources)
+  const italianSources = [
+    'ilsole24ore',
+    'la-repubblica',
+    'corriere-della-sera',
+    'il-fatto-quotidiano',
+    'la-stampa',
+    'tgcom24',
+    'rai-news',
+    'ansa',
+    'agi',
+    'adnkronos',
+    'wired',
+    'reuters',
+    'bloomberg',
+    'milano-finanza',
+    'wall-street-italia',
+    'focus',
+    'le-scienze',
+    'national-geographic',
+    'gazzetta-dello-sport',
+    'corriere-dello-sport',
+    'tuttosport',
+    'rai-sport',
+    'sky-sport',
+    'engadget',
+    'toms-hardware',
+    'digital4',
+    'tech-princess'
+  ];
+
+  // Converto array in stringa separata da virgole per query
+  const sourcesQuery = italianSources.join(',');
+
   let all = [];
   for (let page = 1; page <= 10; page++) {
     const queryPolitica = 'governo OR parlamento OR elezioni OR partito OR ministri OR ministro';
-const url = category === 'politics'
-  ? `https://gnews.io/api/v4/search?q=${encodeURIComponent(queryPolitica)}&lang=it&country=it&token=${key}&pageSize=100&page=${page}`
-  : `https://gnews.io/api/v4/top-headlines?lang=it&country=it&topic=${category}&token=${key}&pageSize=100&page=${page}`;
+
+    // Costruisco URL con filtro sorgenti
+    const url = category === 'politics'
+      ? `https://gnews.io/api/v4/search?q=${encodeURIComponent(queryPolitica)}&lang=it&country=it&sources=${sourcesQuery}&token=${key}&pageSize=100&page=${page}`
+      : `https://gnews.io/api/v4/top-headlines?lang=it&country=it&topic=${category}&sources=${sourcesQuery}&token=${key}&pageSize=100&page=${page}`;
+
     try {
       const data = await (await fetch(url)).json();
       if (!data.articles.length) break;
@@ -256,7 +294,7 @@ const url = category === 'politics'
         ...a,
         category,
         source: { name: a.source?.name || 'Fonte sconosciuta' },
-        image: a.image || ''  // campo corretto per immagine GNews
+        image: a.image || ''
       }));
       all = all.concat(mapped);
     } catch {
@@ -269,6 +307,7 @@ const url = category === 'politics'
   renderPage(currentArticles);
   updatePagination(currentArticles);
 }
+
 
 async function fetchNewsFromAPI(url) {
   try {
