@@ -245,7 +245,10 @@ async function fetchItalianNews(category) {
   const key = 'c3674db69f99957229145b7656d1b845';
   let all = [];
   for (let page = 1; page <= 10; page++) {
-    const url = `https://gnews.io/api/v4/top-headlines?lang=it&country=it&topic=${category}&token=${key}&pageSize=100&page=${page}`;
+    const queryPolitica = 'governo OR parlamento OR elezioni OR partito OR ministri OR ministro';
+const url = category === 'politics'
+  ? `https://gnews.io/api/v4/search?q=${encodeURIComponent(queryPolitica)}&lang=it&country=it&token=${key}&pageSize=100&page=${page}`
+  : `https://gnews.io/api/v4/top-headlines?lang=it&country=it&topic=${category}&token=${key}&pageSize=100&page=${page}`;
     try {
       const data = await (await fetch(url)).json();
       if (!data.articles.length) break;
