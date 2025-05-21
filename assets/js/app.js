@@ -215,22 +215,26 @@ cityInput.addEventListener('input', async () => {
         return;
       }
 
-      // Qui la modifica: mappiamo i giorni normalmente ma in container #weather-columns che è flex a righe
-      container.innerHTML = data.forecast.forecastday.map(day => `
-        <div class="weather-day">
-          <h3>${day.date}</h3>
-          <div>
-            ${day.hour.map(h => `
-              <div class="weather-hour">
-                <span>${h.time.split(' ')[1]}</span>
-                <span>${h.temp_c}°C</span>
-                <img src="https:${h.condition.icon}" alt="${h.condition.text}">
-                <span>${h.condition.text}</span>
-              </div>
-            `).join('')}
+     const locationName = `${data.location.name}, ${data.location.region}, ${data.location.country}`;
+
+container.innerHTML = `
+  <p><strong>Località:</strong> ${locationName}</p>
+  ${data.forecast.forecastday.map(day => `
+    <div class="weather-day">
+      <h3>${day.date}</h3>
+      <div>
+        ${day.hour.map(h => `
+          <div class="weather-hour">
+            <span>${h.time.split(' ')[1]}</span>
+            <span>${h.temp_c}°C</span>
+            <img src="https:${h.condition.icon}" alt="${h.condition.text}">
+            <span>${h.condition.text}</span>
           </div>
-        </div>
-      `).join('');
+        `).join('')}
+      </div>
+    </div>
+  `).join('')}
+`;
     } catch {
       document.getElementById('weather-columns').innerHTML = '<p class="error-message">Errore nel recupero del meteo.</p>';
     }
