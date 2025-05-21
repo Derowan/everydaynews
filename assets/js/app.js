@@ -318,7 +318,8 @@ async function fetchNewsFromAPI(url) {
     updatePagination(currentArticles);
   } catch (err) {
     console.error(err);
-    newsContainer.innerHTML = '<p>Errore caricamento notizie.</p>';
+    weatherContainer.innerHTML = '';
+newsContainer.innerHTML = '<p>Errore caricamento notizie.</p>';
   }
 }
 
