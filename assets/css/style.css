@@ -297,8 +297,8 @@ header {
 
 #weather-form {
   width: 100%;
-  margin: 30px auto 40px auto;
-  padding: 20px;
+  padding: 30px 20px;
+  box-sizing: border-box;
   background-color: #0f172a; /* stesso colore header */
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
