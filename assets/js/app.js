@@ -123,6 +123,7 @@ document.querySelectorAll('.dropdown').forEach(dropdown => {
 logoLink.addEventListener('click', e => {
   e.preventDefault();
   newsContainer.innerHTML = '';
+  weatherContainer.innerHTML = '';
   paginationContainer.innerHTML = '';
   toggleSourceFilter(false);
   const welcomeImage = document.getElementById('welcome-image');
