@@ -133,6 +133,7 @@ logoLink.addEventListener('click', e => {
 // --- METEO ---
 document.getElementById('meteo-link').addEventListener('click', e => {
   e.preventDefault();
+   const weatherContainer = document.getElementById('weather-container');
   document.getElementById('welcome-image').style.display = 'none';
   toggleSourceFilter(false);
   paginationContainer.innerHTML = '';
