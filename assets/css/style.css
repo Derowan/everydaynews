@@ -295,11 +295,14 @@ header {
 
 /* METEO */
 
+/* Contenitore form meteo */
 #weather-form {
   width: 100%;
-  padding: 30px 20px;
+  max-width: 600px;
+  margin: 30px auto 50px auto;
+  padding: 25px 20px;
   box-sizing: border-box;
-  background-color: #0f172a; /* stesso colore header */
+  background-color: #0f172a;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   color: white;
@@ -309,11 +312,11 @@ header {
 
 /* Titolo del form */
 #weather-form h2 {
-  color: #0f172a;
-  margin-bottom: 15px;
   font-weight: bold;
-  font-size: 1.5em;
+  font-size: 1.5rem;
   text-align: center;
+  margin-bottom: 20px;
+  color: #3b82f6;
 }
 
 /* Input testo città */
@@ -326,7 +329,7 @@ header {
   background-color: #1e293b;
   color: white;
   box-sizing: border-box;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
 }
 
 #city-input:focus {
@@ -335,23 +338,23 @@ header {
   background-color: #273449;
 }
 
-/* Suggerimenti città (dropdown) */
+/* Dropdown suggerimenti città */
 #suggestions {
+  margin-top: 0;
   background-color: #1e293b;
   border: 1.5px solid #64748b;
   border-top: none;
   border-radius: 0 0 6px 6px;
   max-height: 180px;
   overflow-y: auto;
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: white;
-  display: none; /* visibile solo quando popolato */
-  margin-top: -1.5px; /* sovrappone il bordo dell’input */
+  display: none;
   box-shadow: 0 4px 10px rgba(0,0,0,0.5);
   z-index: 1500;
 }
 
-/* Oggetti singoli suggerimento */
+/* Singoli suggerimenti */
 .suggestion-item {
   padding: 10px 15px;
   cursor: pointer;
@@ -367,7 +370,6 @@ header {
   color: white;
 }
 
-/* Stato nessun risultato o errore */
 .suggestion-item.no-results,
 .suggestion-item.error {
   cursor: default;
@@ -391,13 +393,15 @@ header {
   transition: background-color 0.3s ease;
 }
 
-#get-weather:hover {
+#get-weather:hover,
+#get-weather:focus {
   background-color: #2563eb;
+  outline: none;
 }
 
 /* Contenitore risultati meteo */
 #weather-result {
-  margin-top: 25px;
+  margin-top: 30px;
   background-color: #1e293b;
   border-radius: 10px;
   padding: 15px;
@@ -407,7 +411,7 @@ header {
   overflow-y: auto;
 }
 
-/* Colonne con le giornate meteo */
+/* Container colonne giorni */
 #weather-columns {
   display: flex;
   gap: 20px;
@@ -415,7 +419,7 @@ header {
   justify-content: center;
 }
 
-/* Singolo giorno meteo */
+/* Singolo giorno */
 .weather-day {
   background-color: #273449;
   border-radius: 8px;
@@ -423,20 +427,24 @@ header {
   min-width: 220px;
   flex: 1 1 220px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  max-height: 480px;
 }
 
-/* Titolo data giorno */
+/* Titolo giorno */
 .weather-day h3 {
   text-align: center;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
   font-weight: bold;
   font-size: 1.1rem;
   color: #3b82f6;
+  user-select: none;
 }
 
-/* Container orari di quel giorno */
+/* Container ore con scroll */
 .weather-day > div {
-  max-height: 300px;
+  flex-grow: 1;
   overflow-y: auto;
   padding-right: 6px; /* spazio per scrollbar */
 }
@@ -458,6 +466,7 @@ header {
   flex: 0 0 45px;
   text-align: center;
   font-weight: 600;
+  user-select: none;
 }
 
 /* Temperatura */
@@ -492,7 +501,7 @@ header {
   font-size: 1rem;
 }
 
-/* Scrollbar personalizzata per Chrome/Edge */
+/* Scrollbar personalizzata */
 #suggestions::-webkit-scrollbar,
 .weather-day > div::-webkit-scrollbar {
   width: 8px;
@@ -506,12 +515,6 @@ header {
 
 /* Responsive per smartphone */
 @media (max-width: 600px) {
-  #weather-columns {
-    flex-direction: column;
-  }
-  .weather-day {
-    min-width: 100%;
-  }
   #weather-form {
     margin: 20px 10px 30px 10px;
     padding: 15px;
@@ -522,5 +525,11 @@ header {
   #get-weather {
     font-size: 1rem;
   }
+  #weather-columns {
+    flex-direction: column;
+  }
+  .weather-day {
+    min-width: 100%;
+    max-height: none;
+  }
 }
-
