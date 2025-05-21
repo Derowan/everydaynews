@@ -244,53 +244,35 @@ async function fetchNews(category, type) {
 async function fetchItalianNews(category) {
   const key = 'c3674db69f99957229145b7656d1b845';
 
-  // Lista fonti italiane accettate da GNews API (senza spazi e minuscolo, verificare con /sources)
   const italianSources = [
-    'ilsole24ore',
-    'la-repubblica',
-    'corriere-della-sera',
-    'il-fatto-quotidiano',
-    'la-stampa',
-    'tgcom24',
-    'rai-news',
-    'ansa',
-    'agi',
-    'adnkronos',
-    'wired',
-    'reuters',
-    'bloomberg',
-    'milano-finanza',
-    'wall-street-italia',
-    'focus',
-    'le-scienze',
-    'national-geographic',
-    'gazzetta-dello-sport',
-    'corriere-dello-sport',
-    'tuttosport',
-    'rai-sport',
-    'sky-sport',
-    'engadget',
-    'toms-hardware',
-    'digital4',
-    'tech-princess'
+    'ilsole24ore', 'la-repubblica', 'corriere-della-sera', 'il-fatto-quotidiano',
+    'la-stampa', 'tgcom24', 'rai-news', 'ansa', 'agi', 'adnkronos', 'wired',
+    'reuters', 'bloomberg', 'milano-finanza', 'wall-street-italia', 'focus',
+    'le-scienze', 'national-geographic', 'gazzetta-dello-sport',
+    'corriere-dello-sport', 'tuttosport', 'rai-sport', 'sky-sport',
+    'engadget', 'toms-hardware', 'digital4', 'tech-princess'
   ];
 
-  // Converto array in stringa separata da virgole per query
   const sourcesQuery = italianSources.join(',');
-
   let all = [];
-  let all = [];
-const maxArticles = 300;
-let page = 1;
+  const maxArticles = 300;
+  let page = 1;
 
-while (all.length < maxArticles) {
+  const categoryKeywords = {
+    politics: 'governo OR parlamento OR elezioni OR partito OR ministri OR ministro OR senato OR camera OR coalizione OR democrazia OR costituzione OR decreto OR presidente',
+    business: 'economia OR finanza OR mercati OR borsa OR PIL OR inflazione OR aziende OR investimenti OR spread OR tasse OR lavoro OR industria OR commercio OR export',
+    entertainment: 'cinema OR musica OR spettacolo OR televisione OR serie TV OR festival OR attori OR attrici OR film OR concerti OR showbiz OR cultura pop',
+    health: 'salute OR medicina OR ospedale OR virus OR covid OR vaccino OR sanità OR medici OR infermieri OR epidemia OR benessere OR prevenzione OR malattia',
+    science: 'scienza OR ricerca OR esperimento OR spazio OR fisica OR biologia OR scoperte OR ambiente OR laboratorio OR clima OR energia OR università OR tecnologia scientifica',
+    sports: 'calcio OR sport OR olimpico OR partita OR atleta OR torneo OR campionato OR squadra OR allenatore OR gol OR Formula 1 OR tennis OR basket',
+    technology: 'tecnologia OR innovazione OR startup OR intelligenza artificiale OR AI OR robot OR informatica OR app OR software OR smartphone OR social OR sicurezza informatica',
+    general: 'cronaca OR attualità OR notizie OR eventi OR aggiornamenti OR società OR curiosità OR Italia OR quotidiani OR giornali OR breaking news'
+  };
 
-    const queryPolitica = 'governo OR parlamento OR elezioni OR partito OR ministri OR ministro';
+  const keywordQuery = categoryKeywords[category] || 'notizie';
 
-    // Costruisco URL con filtro sorgenti
-    const url = category === 'politics'
-      ? `https://gnews.io/api/v4/search?q=${encodeURIComponent(queryPolitica)}&lang=it&country=it&sources=${sourcesQuery}&token=${key}&pageSize=100&page=${page}`
-      : `https://gnews.io/api/v4/top-headlines?lang=it&country=it&topic=${category}&sources=${sourcesQuery}&token=${key}&pageSize=100&page=${page}`;
+  while (all.length < maxArticles) {
+    const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(keywordQuery)}&lang=it&country=it&sources=${sourcesQuery}&token=${key}&pageSize=100&page=${page}`;
 
     try {
       const data = await (await fetch(url)).json();
@@ -307,12 +289,14 @@ while (all.length < maxArticles) {
       break;
     }
   }
+
   currentArticles = Array.from(new Map(all.map(a => [a.url, a])).values());
   currentPage = 1;
   populateSourceFilter(currentArticles);
   renderPage(currentArticles);
   updatePagination(currentArticles);
 }
+
 
 
 async function fetchNewsFromAPI(url) {
