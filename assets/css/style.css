@@ -87,6 +87,22 @@ header {
   padding: 10px;
 }
 
+.news-item p {
+  font-size: 0.75em;
+  margin: 2px 0;
+  flex-grow: 0.8;  
+  /* altezza fissa per limitare l'anteprima */
+  max-height: 4.5em; /* circa 3 righe, regola come vuoi */
+  overflow-y: scroll; /* scrollbar sempre visibile */
+  /* per fare il "troncamento" con 3 righe, se vuoi mantenere */
+  display: -webkit-box;
+  -webkit-line-clamp: unset; /* togli il troncamento testuale */
+  -webkit-box-orient: vertical;
+  /* opzionale: aggiungi padding a destra per non far sovrapporre scrollbar */
+  padding-right: 6px;
+}
+
+/* VERSIONE PRECEDENTE
 .news-item {
   overflow-y: scroll; 
   background-color: white;
@@ -99,6 +115,7 @@ header {
   flex-direction: column;
   justify-content: space-between;
 }
+*/
 
 .news-category {
   font-size: 0.6em;
