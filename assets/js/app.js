@@ -279,7 +279,12 @@ async function fetchItalianNews(category) {
   const sourcesQuery = italianSources.join(',');
 
   let all = [];
-  for (let page = 1; page <= 10; page++) {
+  let all = [];
+const maxArticles = 300;
+let page = 1;
+
+while (all.length < maxArticles) {
+
     const queryPolitica = 'governo OR parlamento OR elezioni OR partito OR ministri OR ministro';
 
     // Costruisco URL con filtro sorgenti
