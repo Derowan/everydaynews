@@ -1,7 +1,7 @@
 const proxyUrl = 'https://everydaynews.onrender.com';
 const newsContainer = document.getElementById('news-container');
 const weatherContainer = document.getElementById('weather-container');
-const paginationContainer = document.getElementById('pagination') || createPaginationContainer();
+const paginationContainer = document.getElementById('pagination');
 
 let currentArticles = [];
 let currentPage = 1;
