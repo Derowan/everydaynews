@@ -265,14 +265,13 @@ async function fetchItalianNews(category) {
   let page = 1;
 
   const categoryKeywords = {
-    politics: 'governo OR parlamento OR elezioni OR partito OR ministri OR ministro OR senato OR camera OR coalizione OR democrazia OR costituzione OR decreto OR presidente',
-    business: 'economia OR finanza OR mercati OR borsa OR PIL OR inflazione OR aziende OR investimenti OR spread OR tasse OR lavoro OR industria OR commercio OR export',
+    politics: 'governo OR parlamento OR elezioni OR partito OR ministri OR ministro OR senato OR camera OR coalizione OR democrazia OR costituzione OR decreto OR presidente OR voto OR votazione OR presidente',
+    business: 'economia OR finanza OR mercati OR borsa OR PIL OR inflazione OR aziende OR investimenti OR spread OR tasse OR lavoro OR industria OR commercio OR export OR NASDAQ',
     entertainment: 'cinema OR musica OR spettacolo OR televisione OR serie TV OR festival OR attori OR attrici OR film OR concerti OR showbiz OR cultura pop',
-    health: 'salute OR medicina OR ospedale OR virus OR covid OR vaccino OR sanità OR medici OR infermieri OR epidemia OR benessere OR prevenzione OR malattia',
     science: 'scienza OR ricerca OR esperimento OR spazio OR fisica OR biologia OR scoperte OR ambiente OR laboratorio OR clima OR energia OR università OR tecnologia scientifica',
     sports: 'calcio OR sport OR olimpico OR partita OR atleta OR torneo OR campionato OR squadra OR allenatore OR gol OR Formula 1 OR tennis OR basket',
     technology: 'tecnologia OR innovazione OR startup OR intelligenza artificiale OR AI OR robot OR informatica OR app OR software OR smartphone OR social OR sicurezza informatica',
-    general: 'cronaca OR attualità OR notizie OR eventi OR aggiornamenti OR società OR curiosità OR Italia OR quotidiani OR giornali OR breaking news'
+    general: 'cronaca OR attualità OR notizie OR eventi OR aggiornamenti OR società OR curiosità OR Italia OR quotidiani OR giornali OR breaking news OR Milano'
   };
 
   const keywordQuery = categoryKeywords[category] || 'notizie';
