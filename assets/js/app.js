@@ -206,6 +206,7 @@ document.getElementById('meteo-link').addEventListener('click', e => {
       const res = await fetch(url);
       const data = await res.json();
       const container = document.getElementById('weather-columns');
+      weatherContainer.style.display = 'block';
       if (data.error) {
         container.innerHTML = `<p class="error-message">${data.error.message}</p>`;
         return;
