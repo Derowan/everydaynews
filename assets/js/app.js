@@ -295,6 +295,7 @@ while (all.length < maxArticles) {
     try {
       const data = await (await fetch(url)).json();
       if (!data.articles.length) break;
+      page++;
       const mapped = data.articles.map(a => ({
         ...a,
         category,
