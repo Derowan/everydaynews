@@ -411,6 +411,16 @@ header {
   overflow-y: auto;
 }
 
+/*località ricercata*/
+#weather-columns p {
+  font-weight: 700;           /* Grassetto */
+  font-size: 1.3rem;          /* Dimensione testo un po' più grande */
+  color: #2c3e50;             /* Colore blu scuro elegante */
+  margin-bottom: 15px;        /* Spazio sotto per separare dalle schede */
+  border-bottom: 2px solid #3498db; /* Linea sottile blu sotto */
+  padding-bottom: 5px;        /* Padding sotto testo per stacco */
+}
+
 /* Container colonne giorni */
 #weather-columns {
   display: flex;
