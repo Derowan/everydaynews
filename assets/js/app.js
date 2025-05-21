@@ -154,44 +154,45 @@ document.getElementById('meteo-link').addEventListener('click', e => {
   const cityInput = document.getElementById('city-input');
   const suggestions = document.getElementById('suggestions');
 
-  // Funzione per ottenere suggerimenti da Nominatim
-  cityInput.addEventListener('input', async () => {
-    const query = cityInput.value.trim();
-    if (query.length < 3) {
+  // Funzione per ottenere suggerimenti da LocationIQ
+cityInput.addEventListener('input', async () => {
+  const query = cityInput.value.trim();
+  if (query.length < 3) {
+    suggestions.style.display = 'none';
+    suggestions.innerHTML = '';
+    return;
+  }
+  try {
+    const res = await fetch(`https://us1.locationiq.com/v1/autocomplete.php?key=pk.b2bd36f97d6facbcfd97bb7542e86a9e&q=${encodeURIComponent(query)}&limit=5&format=json&accept-language=it`);
+    const data = await res.json();
+    if (data.length === 0) {
       suggestions.style.display = 'none';
       suggestions.innerHTML = '';
       return;
     }
-    try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=5&accept-language=it`);
-      const data = await res.json();
-      if (data.length === 0) {
+    suggestions.innerHTML = data.map(place => `
+      <div class="suggestion-item" data-lat="${place.lat}" data-lon="${place.lon}">
+        ${place.display_name}
+      </div>
+    `).join('');
+    suggestions.style.display = 'block';
+
+    // Click su suggerimento per riempire input e nascondere dropdown
+    document.querySelectorAll('.suggestion-item').forEach(item => {
+      item.addEventListener('click', () => {
+        cityInput.value = item.textContent;
+        cityInput.dataset.lat = item.dataset.lat;
+        cityInput.dataset.lon = item.dataset.lon;
         suggestions.style.display = 'none';
         suggestions.innerHTML = '';
-        return;
-      }
-      suggestions.innerHTML = data.map(place => `
-        <div class="suggestion-item" data-lat="${place.lat}" data-lon="${place.lon}">
-          ${place.display_name}
-        </div>
-      `).join('');
-      suggestions.style.display = 'block';
-
-      // Click su suggerimento per riempire input e nascondere dropdown
-      document.querySelectorAll('.suggestion-item').forEach(item => {
-        item.addEventListener('click', () => {
-          cityInput.value = item.textContent;
-          cityInput.dataset.lat = item.dataset.lat;
-          cityInput.dataset.lon = item.dataset.lon;
-          suggestions.style.display = 'none';
-          suggestions.innerHTML = '';
-        });
       });
-    } catch {
-      suggestions.style.display = 'none';
-      suggestions.innerHTML = '';
-    }
-  });
+    });
+  } catch {
+    suggestions.style.display = 'none';
+    suggestions.innerHTML = '';
+  }
+});
+
 
   document.getElementById('get-weather').addEventListener('click', async () => {
     let query = cityInput.value.trim();
