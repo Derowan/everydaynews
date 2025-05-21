@@ -135,7 +135,8 @@ document.getElementById('meteo-link').addEventListener('click', e => {
   document.getElementById('welcome-image').style.display = 'none';
   toggleSourceFilter(false);
   paginationContainer.innerHTML = '';
-  newsContainer.innerHTML = `
+  newsContainer.innerHTML = '';
+  weatherContainer.innerHTML = `
     <div id="weather-form">
       <h2>Inserisci località</h2>
       <input id="city-input" type="text" placeholder="Es. Roma" autocomplete="off">
